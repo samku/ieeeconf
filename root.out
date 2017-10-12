@@ -1,0 +1,18 @@
+\BOOKMARK [1][-]{section.1}{INTRODUCTION}{}% 1
+\BOOKMARK [1][-]{section.2}{PROBLEM FORMULATION}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{System model}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Optimal control problem}{section.2}% 4
+\BOOKMARK [1][-]{section.3}{Solution strategy}{}% 5
+\BOOKMARK [2][-]{subsection.3.1}{Spline parameterization}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.2}{Spline-based MPC}{section.3}% 7
+\BOOKMARK [2][-]{subsection.3.3}{Distributed formulation}{section.3}% 8
+\BOOKMARK [1][-]{section.4}{Simulation results}{}% 9
+\BOOKMARK [2][-]{subsection.4.1}{Abbreviations and Acronyms}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.2}{Units}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.3}{Equations}{section.4}% 12
+\BOOKMARK [2][-]{subsection.4.4}{Some Common Mistakes}{section.4}% 13
+\BOOKMARK [1][-]{section.5}{USING THE TEMPLATE}{}% 14
+\BOOKMARK [2][-]{subsection.5.1}{Headings, etc}{section.5}% 15
+\BOOKMARK [2][-]{subsection.5.2}{Figures and Tables}{section.5}% 16
+\BOOKMARK [1][-]{section.6}{CONCLUSIONS}{}% 17
+\BOOKMARK [1][-]{section*.6}{References}{}% 18
