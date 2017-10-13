@@ -2,7 +2,7 @@
 %2345678901234567890123456789012345678901234567890123456789012345678901234567890
 %        1         2         3         4         5         6         7         8
 
-\documentclass[letterpaper, 10 pt, conference]{ieeeconf} 
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{gensymb}
@@ -36,7 +36,7 @@
 
 %\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
 
-\IEEEoverridecommandlockouts                              % This command is only needed if 
+\IEEEoverridecommandlockouts                              % This command is only needed if
                                                           % you want to use the \thanks command
 
 \overrideIEEEmargins                                      % Needed to meet printer requirements.
@@ -58,16 +58,10 @@ vehicles transporting a flexible payload*
 }
 
 
-\author{Sampath Kumar Mulagaleti$^{1}$, Ruben Van Parys$^{2}$ and Goele Pipeleers$^{2}$%  <-this % stops a space
-\thanks{*This work was not supported by any organization}% <-this % stops a space
-\thanks{$^{1}$Albert Author is with Faculty of Electrical Engineering, Mathematics and Computer Science,
-        University of Twente, 7500 AE Enschede, The Netherlands
-        {\tt\small albert.author@papercept.net}}%
-\thanks{$^{2}$Bernard D. Researcheris with the Department of Electrical Engineering, Wright State University,
-        Dayton, OH 45435, USA
-        {\tt\small b.d.researcher@ieee.org}}%
+\author{Sampath Kumar Mulagaleti$^{1}$, Ruben Van Parys$^{1}$ and Goele Pipeleers$^{1}$%  <-this % stops a space
+\thanks{*This work benefits from KU Leuven-BOF PFV/10/002 Centre of Excellence: Optimization in Engineering (OPTEC); from the Belgian Programme on Interuniversity Attraction Poles, initiated by the Belgian Federal Science Policy Office (DYSCO); from the project G0C4515N of the Research Foundation-Flanders (FWO-Flanders); and from the KU Leuven Research project C14/15/067. Ruben Van Parys is a PhD fellow of FWO-Flanders. }%
+\thanks{$^{1}$The authors are with the MECO Research Group, Department of Mechanical Engineering, Division PMA, KU Leuven, 3001 Leuven, Belgium and are member of Flanders Make. \texttt{sampath's email}}
 }
-
 
 \begin{document}
 
@@ -89,18 +83,18 @@ optimization problem be solved repeatedly in a receding horizon fashion, making 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
 
-Payload transportation tasks are ubiquitous in industrial environments. These payloads can vary greatly in weights, necessitating multiple transportation solutions of varying payload capacities be used within the same logistics structure. An alternative to this would be to use multiple vehicles to cooperatively tow a payload, with the number of vehicles chosen as per the towing requirements. To enable such a multi-agent system to work autonomously and transport the payload to a desired location, control strategies are required which perform coordinated motion of the vehicles. 
+Payload transportation tasks are ubiquitous in industrial environments. These payloads can vary greatly in weights, necessitating multiple transportation solutions of varying payload capacities be used within the same logistics structure. An alternative to this would be to use multiple vehicles to cooperatively tow a payload, with the number of vehicles chosen as per the towing requirements. To enable such a multi-agent system to work autonomously and transport the payload to a desired location, control strategies are required which perform coordinated motion of the vehicles.
 \\
-\indent Transportation and manipulation of objects with multiple (mobile) manipulators is a standard problem in robotics and control. Some of the early approaches to model and control such systems are presented in \cite{c1} \cite{c2} \cite{c3}, and an optimal control approach in \cite{c4}. More powerful optimization-based control techniques can be formulated in a Model Predictive Control (MPC) framework, which explicitly incorporates the system constraints. Such techniques have been applied to perform trajectory tracking with multiple vehicles moving in a desired formation \cite{c5}. Optimization-based techniques can also be used to generate optimal state trajectories, which are sent to a low-level controller to track. When applied to robotic platforms, they fall under the umbrella of motion planning algorithms. Motion planning for multiple vehicles moving in a formation is done within an MPC framework in \cite{c6}, utilizing a leader-follower strategy. Such a strategy is not robust against possible failure of the leader agent. This necessitates development of strategies in which each agent within the multi-agent system has equal role to play. This leads onto the domain of Distributed model predictive control (DMPC). Within the DMPC framework, the control problem is distributed over the agents. Since an optimization problem underlies the MPC framework, DMPC based techniques usually utilize distributed optimization methods to distribute the optimization problem over the agents \cite{c7}. Motion planning algorithms are designed within this framework in \cite{c8} and \cite{c9} for formation control of multiple agents. 
+\indent Transportation and manipulation of objects with multiple (mobile) manipulators is a standard problem in robotics and control. Some of the early approaches to model and control such systems are presented in \cite{c1} \cite{c2} \cite{c3}, and an optimal control approach in \cite{c4}. More powerful optimization-based control techniques can be formulated in a Model Predictive Control (MPC) framework, which explicitly incorporates the system constraints. Such techniques have been applied to perform trajectory tracking with multiple vehicles moving in a desired formation \cite{c5}. Optimization-based techniques can also be used to generate optimal state trajectories, which are sent to a low-level controller to track. When applied to robotic platforms, they fall under the umbrella of motion planning algorithms. Motion planning for multiple vehicles moving in a formation is done within an MPC framework in \cite{c6}, utilizing a leader-follower strategy. Such a strategy is not robust against possible failure of the leader agent. This necessitates development of strategies in which each agent within the multi-agent system has equal role to play. This leads onto the domain of Distributed model predictive control (DMPC). Within the DMPC framework, the control problem is distributed over the agents. Since an optimization problem underlies the MPC framework, DMPC based techniques usually utilize distributed optimization methods to distribute the optimization problem over the agents \cite{c7}. Motion planning algorithms are designed within this framework in \cite{c8} and \cite{c9} for formation control of multiple agents.
 \\
 \indent
  A major difference between formation control problems and the payload transportation problem is that in the latter, the agents are dynamically coupled. This means that a change in state of one of the agents results in a change in state of the others. The coupled dynamics act as constraints on the centralized optimization problem, and decomposing the centralized problem for DMPC purposes would require decomposing the coupling dynamics constraint. Decoupling of dynamics is done using primal decomposition
  in \cite{c10}, in which, linear systems are considered, and an optimal consensus problem is solved. In optimal consensus problems, multiple optimization variables are driven to the
  same value over iterations. In other words, consensus is achieved between different states of the system. Another approach based on dual decomposition, is discussed in \cite{c11}. In this, the variable splitting method is employed \cite{c8}, with the introduction of copies of states of neighboring vehicles which affect local states of a host vehicle. More robust methods based on the ADMM are formulated in \cite{c12}, which consider coupled objective functions in addition to coupled nonlinear dynamics. Another alternative is introduced in \cite{c13}, where the
- ADMM-consensus problem introduced in \cite{c14} is combined with the idea of introducing copies of neighboring states from \cite{c11}. 
+ ADMM-consensus problem introduced in \cite{c14} is combined with the idea of introducing copies of neighboring states from \cite{c11}.
  \\
  \indent
- This work proposes a decentralized-consensus ADMM based DMPC scheme to solve the cooperative payload transportation problem. Decentralized-consensus is achieved by decoupling the 2nd ADMM step using a novel variable-copying scheme inspired from \cite{c9}. In order to reduce the communication and computation load, 1 ADMM iteration is performed per DMPC iteration, and the ADMM iterations are supported by inter-vehicle communication. 
+ This work proposes a decentralized-consensus ADMM based DMPC scheme to solve the cooperative payload transportation problem. Decentralized-consensus is achieved by decoupling the 2nd ADMM step using a novel variable-copying scheme inspired from \cite{c9}. In order to reduce the communication and computation load, 1 ADMM iteration is performed per DMPC iteration, and the ADMM iterations are supported by inter-vehicle communication.
  \\ \\ \indent
  The rest of the paper is organized as follows: \\
 Section  II  introduces  the  motion  planning  problem  for
@@ -112,21 +106,21 @@ The dynamic system under consideration is modeled as multiple holonomic vehicles
 
 \begin{figure}
   \centering
-  \includegraphics[scale=0.3]{D:/ECC2018/images/{1}.png}
+  % \includegraphics[scale=0.3]{D:/ECC2018/images/{1}.png}
   \caption{Dynamic model decoupling}
   \label{2D_schematic}
 \end{figure}
 
 \subsection{Optimal control problem}
 This section discusses the formulation of optimization problem with the payload and vehicle trajectories as the optimization variables. The solution of this problem are the position trajectories the vehicles and the payload should follow in order to transport the payload to a location closest to its goal $x_d \in \mathbb{R}^2$ within the time horizon $T$ \textit{s} over which the problem is solved.
-The payload trajectory is represented by the vector ${x_0(t) \in \mathbb{R}^2}$ and that of each vehicle $i$ by ${x_i(t) \in \mathbb{R}^2}$. 
+The payload trajectory is represented by the vector ${x_0(t) \in \mathbb{R}^2}$ and that of each vehicle $i$ by ${x_i(t) \in \mathbb{R}^2}$.
  The formulation is shown in \eqref{label:central}. The case of $N$=3 vehicles is dealt here. Extension to problems with more vehicles can be done by modifying the \textit{intra-vehicle anti-collision} constraints.
 
 \begin{equation}
   \label{label:central}
   \begin{aligned}
     & \minimize_{\forall i:x_i(t),x_0(t)} && \mathlarger{\int_0^T} \mathlarger{||}x_0(t)-x_d\mathlarger{||}_1 dt \\
-    & \subj 
+    & \subj
     && \ubar{l} \preceq f_i(x_0(t),x_i(t)) \preceq \bar{l}\\
     &       && g(x_0(t),x_1(t),x_2(t),x_3(t)) = 0 \\
     &		&& h_{ij}(x_0(t),x_i(t),x_j(t)) \leq 0 \\
@@ -134,55 +128,53 @@ The payload trajectory is represented by the vector ${x_0(t) \in \mathbb{R}^2}$ 
     &       && x_0^{(k)}(0) = x_{0,0}^{(k)}, \quad x_i^{(k)}(0) = x_{0,i}^{(k)} \\
    	&       && x_0^{(k)}(T) = x_{T,0}^{(k)} , \quad x_i^{(k)}(T) = x_{T,i}^{(k)} \\
    	&       && k\in{0,1,2} \\
-    &                                && \forall t \in [0,T], \quad \forall i,j \in \{1,2,3\}, i \neq j 
+    &                                && \forall t \in [0,T], \quad \forall i,j \in \{1,2,3\}, i \neq j
   \end{aligned}
 \end{equation}
-The function $f_i:\mathbb{R}^4\to\mathbb{R}^3$ consists of individual vehicle $i$'s dynamics, and flexible element $i$'s length. The lower and upper bounds on these quantities are captured in vectors $\ubar{l}$ and $\bar{l}$ respectively. The function $g:\mathbb{R}^8\to\mathbb{R}$ represents the payload dynamics. 
-\\ 
- Intra-vehicle collisions are avoided using the third constraint, defined by the function $h_{ij}:\mathbb{R}^6\to\mathbb{R}$. It limits the angles between the vehicles to lie at greater than 90$\degree$ when subtended at the payload. It is reiterated that for $N$$>$$3$, this constraint should be reformulated. 
- These functions are shown in \eqref{eq:cons}. Note that the indication of time dependence of the variables is dropped for ease of notation.  
- 
+The function $f_i:\mathbb{R}^4\to\mathbb{R}^3$ consists of individual vehicle $i$'s dynamics, and flexible element $i$'s length. The lower and upper bounds on these quantities are captured in vectors $\ubar{l}$ and $\bar{l}$ respectively. The function $g:\mathbb{R}^8\to\mathbb{R}$ represents the payload dynamics.
+\\
+ Intra-vehicle collisions are avoided using the third constraint, defined by the function $h_{ij}:\mathbb{R}^6\to\mathbb{R}$. It limits the angles between the vehicles to lie at greater than 90$\degree$ when subtended at the payload. It is reiterated that for $N$$>$$3$, this constraint should be reformulated.
+ These functions are shown in \eqref{eq:cons}. Note that the indication of time dependence of the variables is dropped for ease of notation.
+
  \begin{equation}\label{eq:cons}
- \begin{matrix}
- f_i(x_0,x_i) = \begin{bmatrix}
- m_i\ddot{x}_i + c_i(\dot{x}_i-\dot{x}_0) + k_i(x_i-x_0) \\
- (x_i-x_0)^T(x_i-x_0) \\
- \end{bmatrix} \\ \\
- g(x_0,x_1,x_2,x_3) = m_0\ddot{x}_0 +  \sum\limits_{i=1}^{3}\begin{bmatrix}{c_i(\dot{x}_i-\dot{x}_0) + k_i(x_i - x_0)} \end{bmatrix}
- \\ \\
- h_{ij}(x_0(t),x_i(t),x_j(t)) = \mathlarger{\langle} x_i(t) - x_0(t),x_j(t) - x_0(t) \mathlarger{\rangle}
- \end{matrix}
+ \begin{aligned}
+ f_i(x_0,x_i) &=
+ \begin{bmatrix}
+   m_i\ddot{x}_i + c_i(\dot{x}_i-\dot{x}_0) + k_i(x_i-x_0) \\
+  (x_i-x_0)^T(x_i-x_0)
+ \end{bmatrix} \\
+ g(x_0,x_1,x_2,x_3) &= m_0\ddot{x}_0 +  \sum\limits_{i=1}^{3}
+ \begin{bmatrix}{c_i(\dot{x}_i-\dot{x}_0) + k_i(x_i - x_0)} \end{bmatrix}\\
+ h_{ij}(x_0(t),x_i(t),x_j(t)) &= \mathlarger{\langle} x_i(t) - x_0(t),x_j(t) - x_0(t) \mathlarger{\rangle}
+ \end{aligned}
  \end{equation}
- The rest of the constraints represent limits on vehicle velocities and accelerations, and initial and final conditions on the vehicle and payload position trajectories and higher derivatives. 
+ The rest of the constraints represent limits on vehicle velocities and accelerations, and initial and final conditions on the vehicle and payload position trajectories and higher derivatives.
 \section{Solution strategy}
 \subsection{Spline parameterization}
 Problem \eqref{label:central} represents an infinite dimensional problem, since the optimization variables $x_0(t)$ and $x_i(t)$ are infinite dimensional, and enforcing the constraints at all instances results in an infinite number of constraints. In order to make the problem numerically tractable, a B-spline based parameterization of the optimization variables is used, along the lines of \cite{c15}. The continuous optimization variables are hence represented as linear combinations of piecewise polynomial basis functions $b_k(t)$, as expressed in \eqref{spline}.
 
 \begin{equation}\label{spline}
-\begin{matrix}
-x_i(t) = \sum\limits_{k=1}^{n} \cx_{i,k}b_k(t) = \cx_i^Tb(t) \quad \forall i \in \{1,.,N\} \\
-x_0(t) = \sum\limits_{k=1}^{n} \cx_{0,k}b_k(t) = \cx_0^Tb(t)
-\end{matrix}
+x_i(t) = \sum\limits_{k=1}^{n} \cx_{i,k}b_k(t) = \cx_i^Tb(t) \quad \forall i \in \{1,.,N\}
 \end{equation}
 
  The trajectories of each vehicle $i$ are consequently represented by the coefficient set $\cx_i$$=$ $\{\cx_{i,k}\}_{k=1}^{n}$ and those of the payload by $\cx_0$$=$$\{\cx_{0,k}\}_{k=1}^{n}$, for a chosen B-spline basis functions vector $b = [b_1,\ldots,b_n]^T$. Substituting these parameterizations in \eqref{label:central} results in an optimization problem with finite number of variables. A B-spline parameterization is chosen because of its convex hull property \cite{c15}, which dictates that the resultant spline function lies within the convex hull of the coefficients. This is because at every time instant over which the spline is defined, the basis functions correspond to a non-negative partition of unity. Hence, the constraints on an infinite dimensional spline can be imposed on the coefficients of the corresponding B-spline basis functions, resulting in a finite number of constraints. Since the constraint functions $f_i$,$g$ and $h_{ij}$ are composed of polynomial combinations of the splines $x_i(t)$ and $x_0(t)$ and their derivatives, the resultant splines' coefficients are polynomial combinations of $\cx_0$ and $\cx_i$. Following the convex hull property, these constraints are transformed to $\cf_i$,$\cg$ and $\ch_{ij}$ respectively.
 The resultant formulation is seen in \eqref{withparam}.
- 
+
  \begin{equation}
    \label{withparam}
    \begin{aligned}
      & \minimize_{\forall i:\cx_i,\cx_0} &&  \J(\cx_0) \\
-     & \subj 
+     & \subj
      && \ubar{l} \preceq \cf_i(\cx_0,\cx_i) \preceq \bar{l}\\
      &       && \cg(\cx_0,\cx_1,\cx_2,\cx_3) = 0 \\
      &		&& \ch_{ij}(\cx_0,\cx_i,\cx_j) \leq 0 \\
      &		&& \cx_i \in \X_i \\
      &		&& \cx_0 \in \X_0 \\
-     &                                && \forall i,j \in \{1,2,3\}, i \neq j 
+     &                                && \forall i,j \in \{1,2,3\}, i \neq j
    \end{aligned}
  \end{equation}
  The MPC updating scheme proposed in \cite{c16} for optimization variables expressed in a B-spline basis can be used on a centralized processor, provided it has access to all $\cx_i$ and $\cx_0$ variables. This scheme is reiterated in Algorithm~\ref{alg:mpc}. The vehicle and payload positions estimated at time $(k+1)\Delta T$ are incorporated into the feasible sets $\X_i$ and $\X_0$ while solving the problem for $\cx_i^{k+1}$ and $\cx_0^{k+1}$.
- 
+
  \algblockdefx[Name]{Repeat}{Until}[1][Unknown]{\textbf{Repeat} #1}{\textbf{Until }}
  \begin{algorithm}[t]
  \caption{Spline-based MPC}\label{alg:mpc}
@@ -200,42 +192,40 @@ The resultant formulation is seen in \eqref{withparam}.
  \subsection{Distributed formulation}
  The purpose of this section is to split the optimization problem \eqref{withparam} into 3 separate problems, one for each vehicle. This means that each problem should contain optimization variables local to the vehicle it is assigned. The first step towards the distributed formulation is the introduction of copies of the payload variables $\cx_0$ on each vehicle. These variables are represented by $\cx_{i0}$. The substitution of these variables results in 3 copies of the payload dynamics constraint $\cg$, each one being $\cg_i(\cx_{i0},\cx_i,\cx_j) = 0$, where $\cx_j = \{\cx_1,\cx_2,\cx_3\}\ominus \cx_i$.
  \\ \indent
- The payload dynamics constraint is further decoupled by borrowing ideas from \cite{c11}, which dictates that the variables $x_{j}(t)$ of vehicle $j$ which affect the dynamics of vehicle $i$ can be modeled as exogenous inputs $x_{ij}(t)$ acting on vehicle $i$. The new variables $x_{ij}(t)$ are hence local to vehicle $i$, and are parameterized by the spline coefficients $\cx_{ij}$. The payload dynamics constraint is thus further modified as $\cg_i(\cx_{i0},\cx_i,\cx_{ij}) = 0$. This substitution is supported by consensus constraints between  $\cx_{j}$ and $\cx_{ij}$. Following a modification of the consensus constraints presented in \cite{c9}, consensus variables $\cz_{ij}$ are introduced on each vehicle $i$, which act as a balance between $\cx_{j}$ and $\cx_{ij}$. The modified optimization problem with local copy variables, consensus variables, and consensus constraints is shown in \eqref{main_problem}.  
+ The payload dynamics constraint is further decoupled by borrowing ideas from \cite{c11}, which dictates that the variables $x_{j}(t)$ of vehicle $j$ which affect the dynamics of vehicle $i$ can be modeled as exogenous inputs $x_{ij}(t)$ acting on vehicle $i$. The new variables $x_{ij}(t)$ are hence local to vehicle $i$, and are parameterized by the spline coefficients $\cx_{ij}$. The payload dynamics constraint is thus further modified as $\cg_i(\cx_{i0},\cx_i,\cx_{ij}) = 0$. This substitution is supported by consensus constraints between  $\cx_{j}$ and $\cx_{ij}$. Following a modification of the consensus constraints presented in \cite{c9}, consensus variables $\cz_{ij}$ are introduced on each vehicle $i$, which act as a balance between $\cx_{j}$ and $\cx_{ij}$. The modified optimization problem with local copy variables, consensus variables, and consensus constraints is shown in \eqref{main_problem}.
    \begin{equation}
      \label{main_problem}
      \begin{aligned}
        & \minimize_{\forall i,j,i \neq j:\cx_i,\cx_{ij},\cz_{ij},\cx_{i0}} &&  \sum\limits_{i=1}^{3}\J(\cx_{i0}) \\
-       & \subj 
+       & \subj
        && \ubar{l} \preceq \cf_i(\cx_{i0},\cx_i) \preceq \bar{l}\\
        &       && \cg_i(\cx_{i0},\cx_i,\cx_{ij}) = 0 \\
        &		&& \ch_{ij}(\cx_{i0},\cx_i,\cx_{ij}) \leq 0 \\
-       & 		&& \cx_{ij} = \cz_{ij} \\
-       & 		&& \cx_{j} = \cz_{ij} \\
-       &		&& \cx_i \in \X_i \\
-       &		&& \cx_{i0} \in \X_0 \\
-       &                                && \forall i,j \in \{1,2,3\}, i \neq j 
+       & 		&& \cx_{ij} = \cz_{ij},\, \cx_{j} = \cz_{ij} \\
+       &		&& \cx_i \in \X_i,\, \cx_{i0} \in \X_0 \\
+       &                                && \forall i,j \in \{1,2,3\}, i \neq j
      \end{aligned}
    \end{equation}
-   
+
   \indent
  The optimization problem \eqref{main_problem} can now be decoupled using the Alternating Direction Method of Multipliers (ADMM). The ADMM algorithm solves the dual of \eqref{main_problem}, after augumenting it with a quadratic term to improve convergence properties. To minimize duality gap, the fewest number of constraints are to be dualized according to \cite{c8}. Hence, only the consensus equality constraints are moved into the objective function to form the lagrangian. This appended objective function is seen in \eqref{Lagrangian}.
 
- 
+
  \begin{equation}\label{Lagrangian}
    \begin{aligned}
-   \mathcal{L}_\rho &= 
+   \mathcal{L}_\rho &=
   {\mathlarger{\sum\limits_{i=1}^{N}}}
-  {\mathlarger{\mathlarger{(}}}\J_i(\cx_{i0}) + 
+  {\mathlarger{\mathlarger{(}}}\J_i(\cx_{i0}) +
  \mathlarger{\sum\limits_{j \neq i}} \mathlarger{(} \lambda_{ij}^T(\cx_{ij} - \cz_{ij}) + \cfrac{\rho}{2} \mathlarger{||}\cx_{ij} - \cz_{ij}\mathlarger{||}_2^2{{\mathlarger{)}}} \\ & \qquad \qquad \qquad \qquad
-  + \mathlarger{\sum\limits_{j \neq i}} \mathlarger{(} \mu_{ij}^T(\cx_{j} - \cz_{ij}) + 
-   \cfrac{\rho}{2} \mathlarger{||}\cx_{j} - \cz_{ij}\mathlarger{||}_2^2 \mathlarger{)}\mathlarger{\mathlarger{\mathlarger{)}}} 
+  + \mathlarger{\sum\limits_{j \neq i}} \mathlarger{(} \mu_{ij}^T(\cx_{j} - \cz_{ij}) +
+   \cfrac{\rho}{2} \mathlarger{||}\cx_{j} - \cz_{ij}\mathlarger{||}_2^2 \mathlarger{)}\mathlarger{\mathlarger{\mathlarger{)}}}
    \\
    &= {\mathlarger{\sum\limits_{i=1}^{N}}}  \mathcal{L}_{\rho,i} (\cx_{i0},\cx_{ij},\cz_{ij},\lambda_{ij},\cx_{j},\mu_{ij}) \\
    &= {\mathlarger{\sum\limits_{i=1}^{N}}}  \mathcal{L}_{\rho,i} (\cx_{i0},\cx_{ij},\cz_{ij},\lambda_{ij},\cx_{i},\cz_{ji},\mu_{ji})
    \end{aligned}
    \end{equation}
 The dual variables introduced in the Lagrangian corresponding to the equality constraints are $\lambda_{ij}$ and $\mu_{ij}$. The last equality in \eqref{Lagrangian} is valid due to the bidirectionality of interaction amongst the vehicles: variables on vehicle $i$ affecting the dynamics of vehicle $j$ correspond to the variables on vehicle $j$ affecting dynamics of vehicle $i$.
-Since the constraints are now completely decoupled, the feasible set on each vehicle $i$ is represented by $\{\cx_{i},\cx_{i0},\cx_{ij}\} \in \Phi_i$. The dual function of \eqref{main_problem} is shown in \eqref{dual_problem}. 
+Since the constraints are now completely decoupled, the feasible set on each vehicle $i$ is represented by $\{\cx_{i},\cx_{i0},\cx_{ij}\} \in \Phi_i$. The dual function of \eqref{main_problem} is shown in \eqref{dual_problem}.
 \begin{equation}\label{dual_problem}
 q(\lambda_{ij},\mu_{ij}) = \inf_{\substack{\{\cx_{i},\cx_{i0},\cx_{ij}\} \in \Phi_i \\ \forall i,j \in \{1,2,3\}, i \neq j}} \mathcal{L}_{\rho}\
 \end{equation}
@@ -290,139 +280,15 @@ Solving the optimization problem \eqref{withparam} till convergence will require
 The algorithm dictates that first, a few ADMM iterations be performed to find the first set of primal and dual variables. The primal $\cx_{i}$ variables are then interpreted in terms of the trajectories $x_i(t)$ on each vehicle $i$, and the tracking of these trajectories begins. According to the spline-MPC scheme discussed in \cite{c16}, $\hat{x}_i(\Delta T)$ and $\hat{x}_{i0}(\Delta T)$ are estimated locally on each vehicle, with perfectly tracked $x_{ij}(t)$ as the exogenous inputs into the local model. These estimates are passed as initial conditions into the MPC problem solving the trajectories from time $\Delta T$ s. This is followed by the usual 3 ADMM steps, with steps 7 and 9 for calculating the primal variables, and 10 for the dual variables. Since variables from the previous ADMM iteration are used in the current iteration, the spline coefficients are transformed to represent the spline in the current time frame, as discussed in \cite{c16}. Step 6 of the algorithm deals with this transformation. Step 9 is the direct least squares solution of the second ADMM step to update the $\cz_{ij}$ variables, and the corresponding problem is shown in \eqref{z_step}.
 \begin{equation}
 \label{z_step}
-\begin{aligned} \cz_{ij}^{k+1} &:= 
+\begin{aligned} \cz_{ij}^{k+1} &:=
  \argmin_{\cz_{ij}} \quad (\tilde{\lambda}^k_{ij})^T(\cx^{k+1}_{ij} - \cz_{ij}) + \cfrac{\rho}{2} \mathlarger{||}\cx^{k+1}_{ij} - \cz_{ij}\mathlarger{||}_2^2{{}} \\ & \qquad \qquad \qquad \qquad
-+ (\tilde{\mu}^k_{ij})^T(\cx^{k+1}_{j} - \cz_{ij}) + 
++ (\tilde{\mu}^k_{ij})^T(\cx^{k+1}_{j} - \cz_{ij}) +
 \cfrac{\rho}{2} \mathlarger{||}\cx^{k+1}_{j} - \cz_{ij}\mathlarger{||}_2^2 \mathlarger{}
 \end{aligned}
 \end{equation}
 \\
 \indent
-From this least squares problem, it can be seen the consensus variables $\cz_{ij}$ are pushed between the \textit{expected} $\cx_{ij}$ variables and the \textit{actual} $\cx_j$ variables, acting as a balance between them. In the first ADMM step (Step 7), the reverse occurs in that $\cx_{ij}$ and $\cx_j$ are pushed towards the previous \textit{compromise} $\cz_{ij}$ variables. Thus, over MPC (and hence, ADMM) iterations, a consensus is achieved between $\cx_{ij}$ and $\cx_j$, resulting the problem dynamics being satisfied. 
-\text{-------------------------------------------------------------------------}
-\text{-------------------------------------------------------------------------}
-\text{-------------------------------------------------------------------------}
-\section{Simulation results}
-The proposed MPC strategy was simulated using the \textit{omg-tools} toolbox.
-
-\subsection{Abbreviations and Acronyms} Define abbreviations and acronyms the first time they are used in the text, even after they have been defined in the abstract. Abbreviations such as IEEE, SI, MKS, CGS, sc, dc, and rms do not have to be defined. Do not use abbreviations in the title or heads unless they are unavoidable.
-
-\subsection{Units}
-
-\begin{itemize}
-
-\item Use either SI (MKS) or CGS as primary units. (SI units are encouraged.) English units may be used as secondary units (in parentheses). An exception would be the use of English units as identifiers in trade, such as “3.5-inch disk drive”.
-\item Avoid combining SI and CGS units, such as current in amperes and magnetic field in oersteds. This often leads to confusion because equations do not balance dimensionally. If you must use mixed units, clearly state the units for each quantity that you use in an equation.
-\item Do not mix complete spellings and abbreviations of units: “Wb/m2” or “webers per square meter”, not “webers/m2”.  Spell out units when they appear in text: “. . . a few henries”, not “. . . a few H”.
-\item Use a zero before decimal points: “0.25”, not “.25”. Use “cm3”, not “cc”. (bullet list)
-
-\end{itemize}
-
-
-\subsection{Equations}
-
-The equations are an exception to the prescribed specifications of this template. You will need to determine whether or not your equation should be typed using either the Times New Roman or the Symbol font (please no other font). To create multileveled equations, it may be necessary to treat the equation as a graphic and insert it into the text after your paper is styled. Number equations consecutively. Equation numbers, within parentheses, are to position flush right, as in (1), using a right tab stop. To make your equations more compact, you may use the solidus ( / ), the exp function, or appropriate exponents. Italicize Roman symbols for quantities and variables, but not Greek symbols. Use a long dash rather than a hyphen for a minus sign. Punctuate equations with commas or periods when they are part of a sentence, as in
-
-$$
-\alpha + \beta = \chi \eqno{(1)}
-$$
-
-Note that the equation is centered using a center tab stop. Be sure that the symbols in your equation have been defined before or immediately following the equation. Use “(1)”, not “Eq. (1)” or “equation (1)”, except at the beginning of a sentence: “Equation (1) is . . .”
-
-\subsection{Some Common Mistakes}
-\begin{itemize}
-
-
-\item The word “data” is plural, not singular.
-\item The subscript for the permeability of vacuum ?0, and other common scientific constants, is zero with subscript formatting, not a lowercase letter “o”.
-\item In American English, commas, semi-/colons, periods, question and exclamation marks are located within quotation marks only when a complete thought or name is cited, such as a title or full quotation. When quotation marks are used, instead of a bold or italic typeface, to highlight a word or phrase, punctuation should appear outside of the quotation marks. A parenthetical phrase or statement at the end of a sentence is punctuated outside of the closing parenthesis (like this). (A parenthetical sentence is punctuated within the parentheses.)
-\item A graph within a graph is an “inset”, not an “insert”. The word alternatively is preferred to the word “alternately” (unless you really mean something that alternates).
-\item Do not use the word “essentially” to mean “approximately” or “effectively”.
-\item In your paper title, if the words “that uses” can accurately replace the word “using”, capitalize the “u”; if not, keep using lower-cased.
-\item Be aware of the different meanings of the homophones “affect” and “effect”, “complement” and “compliment”, “discreet” and “discrete”, “principal” and “principle”.
-\item Do not confuse “imply” and “infer”.
-\item The prefix “non” is not a word; it should be joined to the word it modifies, usually without a hyphen.
-\item There is no period after the “et” in the Latin abbreviation “et al.”.
-\item The abbreviation “i.e.” means “that is”, and the abbreviation “e.g.” means “for example”.
-
-\end{itemize}
-
-
-\section{USING THE TEMPLATE}
-
-Use this sample document as your LaTeX source file to create your document. Save this file as {\bf root.tex}. You have to make sure to use the cls file that came with this distribution. If you use a different style file, you cannot expect to get required margins. Note also that when you are creating your out PDF file, the source file is only part of the equation. {\it Your \TeX\ $\rightarrow$ PDF filter determines the output file size. Even if you make all the specifications to output a letter file in the source - if your filter is set to produce A4, you will only get A4 output. }
-
-It is impossible to account for all possible situation, one would encounter using \TeX. If you are using multiple \TeX\ files you must make sure that the ``MAIN`` source file is called root.tex - this is particularly important if your conference is using PaperPlaza's built in \TeX\ to PDF conversion tool.
-
-\subsection{Headings, etc}
-
-Text heads organize the topics on a relational, hierarchical basis. For example, the paper title is the primary text head because all subsequent material relates and elaborates on this one topic. If there are two or more sub-topics, the next level head (uppercase Roman numerals) should be used and, conversely, if there are not at least two sub-topics, then no subheads should be introduced. Styles named “Heading 1”, “Heading 2”, “Heading 3”, and “Heading 4” are prescribed.
-
-\subsection{Figures and Tables}
-
-Positioning Figures and Tables: Place figures and tables at the top and bottom of columns. Avoid placing them in the middle of columns. Large figures and tables may span across both columns. Figure captions should be below the figures; table heads should appear above the tables. Insert figures and tables after they are cited in the text. Use the abbreviation “Fig. 1”, even at the beginning of a sentence.
-
-\begin{table}[h]
-\caption{An Example of a Table}
-\label{table_example}
-\begin{center}
-\begin{tabular}{|c||c|}
-\hline
-One & Two\\
-\hline
-Three & Four\\
-\hline
-\end{tabular}
-\end{center}
-\end{table}
-
-
-   \begin{figure}[thpb]
-      \centering
-      \framebox{\parbox{3in}{We suggest that you use a text box to insert a graphic (which is ideally a 300 dpi TIFF or EPS file, with all fonts embedded) because, in an document, this method is somewhat more stable than directly inserting a picture.
-}}
-      %\includegraphics[scale=1.0]{figurefile}
-      \caption{Inductance of oscillation winding on amorphous
-       magnetic core versus DC bias magnetic field}
-      \label{figurelabel}
-   \end{figure}
-   
-
-Figure Labels: Use 8 point Times New Roman for Figure labels. Use words rather than symbols or abbreviations when writing Figure axis labels to avoid confusing the reader. As an example, write the quantity “Magnetization”, or “Magnetization, M”, not just “M”. If including units in the label, present them within parentheses. Do not label axes only with units. In the example, write “Magnetization (A/m)” or “Magnetization {A[m(1)]}”, not just “A/m”. Do not label axes with a ratio of quantities and units. For example, write “Temperature (K)”, not “Temperature/K.”
-
-\section{CONCLUSIONS}
-
-A conclusion section is not required. Although a conclusion may review the main points of the paper, do not replicate the abstract as the conclusion. A conclusion might elaborate on the importance of the work or suggest applications and extensions. 
-
-\addtolength{\textheight}{-12cm}   % This command serves to balance the column lengths
-                                  % on the last page of the document manually. It shortens
-                                  % the textheight of the last page by a suitable amount.
-                                  % This command does not take effect until the next page
-                                  % so it should come on the page before the last. Make
-                                  % sure that you do not shorten the textheight too much.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{APPENDIX}
-
-Appendixes should appear before the acknowledgment.
-
-\section*{ACKNOWLEDGMENT}
-
-The preferred spelling of the word “acknowledgment” in America is without an “e” after the “g”. Avoid the stilted expression, “One of us (R. B. G.) thanks . . .”  Instead, try “R. B. G. thanks”. Put sponsor acknowledgments in the unnumbered footnote on the first page.
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-References are important to the reader; therefore, each citation must be complete and correct. If at all possible, references should be commonly available publications.
+From this least squares problem, it can be seen the consensus variables $\cz_{ij}$ are pushed between the \textit{expected} $\cx_{ij}$ variables and the \textit{actual} $\cx_j$ variables, acting as a balance between them. In the first ADMM step (Step 7), the reverse occurs in that $\cx_{ij}$ and $\cx_j$ are pushed towards the previous \textit{compromise} $\cz_{ij}$ variables. Thus, over MPC (and hence, ADMM) iterations, a consensus is achieved between $\cx_{ij}$ and $\cx_j$, resulting the problem dynamics being satisfied.
 
 
 
