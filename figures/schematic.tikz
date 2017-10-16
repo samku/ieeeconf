@@ -1,0 +1,54 @@
+\begin{tikzpicture}
+\usetikzlibrary{decorations.markings}
+
+\tikzstyle{spring}=[decorate,decoration={zigzag,pre length=0.3cm,post length=0.3cm,segment length=6}]
+\tikzstyle{damper}=[thick,decoration={markings,
+  mark connection node=dmp,
+  mark=at position 0.5 with
+  {
+    \node (dmp) [outer sep=0pt,thick, inner sep=0pt,transform shape,rotate=-90,minimum width=15pt,minimum height=3pt,draw=none] {};
+    \draw [thick] ($(dmp.north east)+(2pt,0)$) -- (dmp.south east) -- (dmp.south west) -- ($(dmp.north west)+(2pt,0)$);
+    \draw [thick] ($(dmp.north)+(0,-5pt)$) -- ($(dmp.north)+(0,5pt)$);
+  }
+}, decorate]
+
+\tikzstyle{spring_damper} = [
+    decoration={markings,
+        mark connection node=cntr,
+        mark=at position 0.5 with
+          {
+            \node (cntr) [outer sep=0pt, inner sep=0pt,transform shape,rotate=-90,minimum width=15pt,minimum height=40pt,draw=none] {};
+            \draw [] ($(cntr.north west)+(-15pt,4pt)$) -- ($(cntr.south west)+(15pt,4pt)$) -- ($(cntr.south west)+(15pt,-4pt)$) -- ($(cntr.north west)+(-15pt,-4pt)$);
+            \draw [] ($(cntr.west)+(0,-2pt)$) -- ($(cntr.west)+(0,2pt)$);
+            \draw [] (cntr.north west) -- (cntr.west);
+            \draw [] (cntr.south west) -- ($(cntr.west)+(-5pt,0)$);
+            \draw [spring] ($(cntr.north east)+(0, 0)$) -- ($(cntr.south east)+(0, 0)$);
+            \draw [] (cntr.north east) -- (cntr.north west);
+            \draw [] (cntr.south east) -- (cntr.south west);
+          }
+}, decorate]
+
+\node (G0) at (0,0) [circle,text width=1.5mm, inner sep=0pt, fill=black] {};
+\node (G1) at (-60:3) [circle,text width=1.5mm, inner sep=0pt,fill=black] {};
+\node (G2) at (60:3) [circle,text width=1.5mm, inner sep=0pt, fill=black] {};
+\node (G3) at (180:3) [circle,text width=1.5mm, inner sep=0pt, fill=black] {};
+
+\draw [spring_damper] (G0) -- (G1);
+\draw [spring_damper] (G0) -- (G2);
+\draw [spring_damper] (G0) -- (G3);
+
+\draw [->, >=latex] (G1) -- ($(G1)+(-80:1)$);
+\draw [->, >=latex] (G2) -- ($(G2)+(40:1)$);
+\draw [->, >=latex] (G3) -- ($(G3)+(150:1)$);
+
+\node (x0) at ($(G0.north)+(-0.1,0.2)$) {$x_0$};
+\node (x1) at ($(G1.north)+(0.1,0.2)$) {$x_1$};
+\node (x2) at ($(G2.north)+(0,0.2)$) {$x_2$};
+\node (x3) at ($(G3.north)+(0,0.2)$) {$x_3$};
+
+\node (F1) at ($(G1)+(-80:1)+(0,-0.2)$) {$F_1$};
+\node (F2) at ($(G2)+(40:1)+(0,-0.3)$) {$F_2$};
+\node (F3) at ($(G3)+(150:1)+(0,-0.3)$) {$F_3$};
+
+
+\end{tikzpicture}
