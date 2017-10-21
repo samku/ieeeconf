@@ -53,7 +53,7 @@
 %\usepackage{amssymb}  % assumes amsmath package installed
 
 \title{\LARGE \bf
-Distributed motion planning for multiple
+Distributed model predictive control of multiple
 vehicles transporting a flexible payload*
 }
 
@@ -74,18 +74,16 @@ vehicles transporting a flexible payload*
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-This paper deals with the development of control strategies for cooperatively transporting a flexible payload with multiple vehicles. To this end, an algorithm is
-developed which generates optimal trajectories for the vehicles to follow. The trajectories are parameterized using splines, and the optimization algorithm used to solve for the spline coefficients is based on an Alternating Direction Method of Multipliers (ADMM) formulation. The algorithm instructs that the
-optimization problem be solved repeatedly in a receding horizon fashion, making it fit into a distributed model predictive control (DMPC) framework. One ADMM iteration is performed per DMPC iteration, reducing the inter-agent communication rate. Numerical and experimental validation of the developed control scheme is performed and the results are presented.
+This paper presents a strategy for the control of multiple vehicles that cooperatively transport a flexible payload. To this end, an algorithm is developed which generates optimal trajectories for the vehicles to follow. Solving an optimization problem composes the core of the algorithm. The problem is first decomposed over the vehicles using the Alternating Direction Method of Multipliers (ADMM) algorithm. This results in each vehicle solving a sub-problem to generate its own optimal trajectory. The algorithm instructs that the optimization problem be solved repeatedly in a receding horizon fashion, making it fit into a distributed model predictive control (DMPC) framework. One ADMM iteration is performed per DMPC iteration, reducing the inter-agent communication rate. Numerical validation of the developed control scheme is performed and the results are presented.
 \end{abstract}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
 
-Payload transportation tasks are ubiquitous in industrial environments. These payloads can vary greatly in weights, necessitating multiple transportation solutions of varying payload capacities be used within the same logistics structure. An alternative to this would be to use multiple vehicles to cooperatively tow a payload, with the number of vehicles chosen as per the towing requirements. To enable such a multi-agent system to work autonomously and transport the payload to a desired location, control strategies are required which perform coordinated motion of the vehicles.
+Payload transportation tasks are ubiquitous in industrial environments. These payloads can vary greatly in weights, necessitating multiple transportation solutions of different payload capacities within the same logistics structure. An alternative to this would be to use multiple vehicles to cooperatively tow a payload, with the number of vehicles chosen according to the towing requirements. To enable such a multi-agent system to work autonomously and transport the payload to a desired location, control strategies are required which perform coordinated motion of the vehicles.
 \\
-\indent Transportation and manipulation of objects with multiple (mobile) manipulators is a standard problem in robotics and control. Some of the early approaches to model and control such systems are presented in \cite{c1} \cite{c2} \cite{c3}, and an optimal control approach in \cite{c4}. More powerful optimization-based control techniques can be formulated in a Model Predictive Control (MPC) framework, which explicitly incorporates the system constraints. Such techniques have been applied to perform trajectory tracking with multiple vehicles moving in a desired formation \cite{c5}. Optimization-based techniques can also be used to generate optimal state trajectories, which are sent to a low-level controller to track. When applied to robotic platforms, they fall under the umbrella of motion planning algorithms. Motion planning for multiple vehicles moving in a formation is done within an MPC framework in \cite{c6}, utilizing a leader-follower strategy. Such a strategy is not robust against possible failure of the leader agent. This necessitates development of strategies in which each agent within the multi-agent system has equal role to play. This leads onto the domain of Distributed model predictive control (DMPC). Within the DMPC framework, the control problem is distributed over the agents. Since an optimization problem underlies the MPC framework, DMPC based techniques usually utilize distributed optimization methods to distribute the optimization problem over the agents \cite{c7}. Motion planning algorithms are designed within this framework in \cite{c8} and \cite{c9} for formation control of multiple agents.
+\indent Transportation of objects with multiple vehicles is a standard problem in robotics and control. Some of the early approaches to model and control such systems are presented in \cite{c1,c2,c3}, and an optimal control approach in \cite{c4}. More recent approaches utilize a Model Predictive Control (MPC) framework, which allows to explicity incorporate system constraints in the optimization problem. Such techniques have been applied to perform trajectory tracking with multiple vehicles moving in a desired formation \cite{c5}. Motion planning for multiple vehicles moving in a formation is done within a receding horizon framework in \cite{c6}, utilizing a leader-follower strategy. Such a strategy is not robust against possible failure of the leader agent. This necessitates development of strategies in which each agent has equal role to play within the multi-agent system. This leads to the domain of Distributed model predictive control (DMPC). Within the DMPC framework, the control problem is distributed over the agents. Since an optimization problem underlies the MPC framework, DMPC based techniques usually utilize distributed optimization methods to distribute the optimization problem over the agents \cite{c7}. Motion planning algorithms are designed within this framework in \cite{c8} and \cite{c9} for formation control of multiple agents.
 \\
 \indent
  A major difference between formation control problems and the payload transportation problem is that in the latter, the agents are dynamically coupled. This means that a change in state of one of the agents results in a change in state of the others. The coupled dynamics act as constraints on the centralized optimization problem, and decomposing the centralized problem for DMPC purposes would require decomposing the coupling dynamics constraint. Decoupling of dynamics is done using primal decomposition
@@ -123,11 +121,11 @@ The payload trajectory is represented by the vector ${x_0(t) \in \mathbb{R}^2}$ 
     & \subj
     && \ubar{l} \preceq f_i(x_0(t),x_i(t)) \preceq \bar{l}\\
     &       && g(x_0(t),x_1(t),x_2(t),x_3(t)) = 0 \\
-    &		&& h_{ij}(x_0(t),x_i(t),x_j(t)) \leq 0 \\
-    &		&& \ubar{d} \leq d_i(x_i(t)) \leq \bar{d} \\
+    &        && h_{ij}(x_0(t),x_i(t),x_j(t)) \leq 0 \\
+    &        && \ubar{d} \leq d_i(x_i(t)) \leq \bar{d} \\
     &       && x_0^{(k)}(0) = x_{0,0}^{(k)}, \quad x_i^{(k)}(0) = x_{0,i}^{(k)} \\
-   	&       && x_0^{(k)}(T) = x_{T,0}^{(k)} , \quad x_i^{(k)}(T) = x_{T,i}^{(k)} \\
-   	&       && k\in{0,1,2} \\
+       &       && x_0^{(k)}(T) = x_{T,0}^{(k)} , \quad x_i^{(k)}(T) = x_{T,i}^{(k)} \\
+       &       && k\in{0,1,2} \\
     &                                && \forall t \in [0,T], \quad \forall i,j \in \{1,2,3\}, i \neq j
   \end{aligned}
 \end{equation}
@@ -167,9 +165,9 @@ The resultant formulation is seen in \eqref{withparam}.
      & \subj
      && \ubar{l} \preceq \cf_i(\cx_0,\cx_i) \preceq \bar{l}\\
      &       && \cg(\cx_0,\cx_1,\cx_2,\cx_3) = 0 \\
-     &		&& \ch_{ij}(\cx_0,\cx_i,\cx_j) \leq 0 \\
-     &		&& \cx_i \in \X_i \\
-     &		&& \cx_0 \in \X_0 \\
+     &        && \ch_{ij}(\cx_0,\cx_i,\cx_j) \leq 0 \\
+     &        && \cx_i \in \X_i \\
+     &        && \cx_0 \in \X_0 \\
      &                                && \forall i,j \in \{1,2,3\}, i \neq j
    \end{aligned}
  \end{equation}
@@ -200,9 +198,9 @@ The resultant formulation is seen in \eqref{withparam}.
        & \subj
        && \ubar{l} \preceq \cf_i(\cx_{i0},\cx_i) \preceq \bar{l}\\
        &       && \cg_i(\cx_{i0},\cx_i,\cx_{ij}) = 0 \\
-       &		&& \ch_{ij}(\cx_{i0},\cx_i,\cx_{ij}) \leq 0 \\
-       & 		&& \cx_{ij} = \cz_{ij},\, \cx_{j} = \cz_{ij} \\
-       &		&& \cx_i \in \X_i,\, \cx_{i0} \in \X_0 \\
+       &        && \ch_{ij}(\cx_{i0},\cx_i,\cx_{ij}) \leq 0 \\
+       &         && \cx_{ij} = \cz_{ij},\, \cx_{j} = \cz_{ij} \\
+       &        && \cx_i \in \X_i,\, \cx_{i0} \in \X_0 \\
        &                                && \forall i,j \in \{1,2,3\}, i \neq j
      \end{aligned}
    \end{equation}
