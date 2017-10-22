@@ -12,6 +12,7 @@
 \usepackage{lineno,amssymb,subcaption,algpseudocode,algorithm}
 \usepackage[font={small}]{caption}
 \usepackage{picins}
+\usepackage{cleveref}
 
 % Commands
 \newcommand{\ubar}[1]{\text{\b{$#1$}}}
@@ -83,95 +84,109 @@ This paper presents a strategy for the control of multiple vehicles that coopera
 
 Payload transportation tasks are ubiquitous in industrial environments. These payloads can vary greatly in weights, necessitating multiple transportation solutions of different payload capacities within the same logistics structure. An alternative to this would be to use multiple vehicles to cooperatively tow a payload, with the number of vehicles chosen according to the towing requirements. To enable such a multi-agent system to work autonomously and transport the payload to a desired location, control strategies are required which perform coordinated motion of the vehicles.
 \\
-\indent Transportation of objects with multiple vehicles is a standard problem in robotics and control. Some of the early approaches to model and control such systems are presented in \cite{c1,c2,c3}, and an optimal control approach in \cite{c4}. More recent approaches utilize a Model Predictive Control (MPC) framework, which allows to explicity incorporate system constraints in the optimization problem. Such techniques have been applied to perform trajectory tracking with multiple vehicles moving in a desired formation \cite{c5}. Motion planning for multiple vehicles moving in a formation is done within a receding horizon framework in \cite{c6}, utilizing a leader-follower strategy. Such a strategy is not robust against possible failure of the leader agent. This necessitates development of strategies in which each agent has equal role to play within the multi-agent system. This leads to the domain of Distributed model predictive control (DMPC). Within the DMPC framework, the control problem is distributed over the agents. Since an optimization problem underlies the MPC framework, DMPC based techniques usually utilize distributed optimization methods to distribute the optimization problem over the agents \cite{c7}. Motion planning algorithms are designed within this framework in \cite{c8} and \cite{c9} for formation control of multiple agents.
+\indent Transportation of objects with multiple vehicles is a standard problem in robotics and control. Some of the early approaches to model and control such systems are presented in \cite{c1,c2,c3}, and an optimal control approach in \cite{c4}. More recent approaches utilize a Model Predictive Control (MPC) framework, which allows to explicity incorporate system constraints in the optimization problem. Such techniques have been applied to perform trajectory tracking with multiple vehicles moving in a desired formation \cite{c5}. Motion planning for multiple vehicles moving in a formation is done within a receding horizon framework in \cite{c6}, utilizing a leader-follower strategy. Such a strategy is not robust against possible failure of the leader agent. This necessitates development of strategies in which each agent performs an equivalent task within the multi-agent system. This leads to the domain of Distributed Model Predictive Control (DMPC). Within the DMPC framework, the control problem is distributed over the agents. Since an optimization problem underlies the MPC framework, DMPC based techniques usually utilize distributed optimization methods to distribute the optimization problem over the agents \cite{c7}. Motion planning algorithms are designed within this framework in \cite{c8} and \cite{c16} for formation control of multiple agents.
 \\
 \indent
- A major difference between formation control problems and the payload transportation problem is that in the latter, the agents are dynamically coupled. This means that a change in state of one of the agents results in a change in state of the others. The coupled dynamics act as constraints on the centralized optimization problem, and decomposing the centralized problem for DMPC purposes would require decomposing the coupling dynamics constraint. Decoupling of dynamics is done using primal decomposition
+ A major difference between formation control problems and the payload transportation problem is that in the latter, the agents are dynamically coupled. This means that a change in state of one of the agents alters the state of the others. The coupled dynamics act as constraints shared by all the agents within the multi-agent system, and decomposing the centralized problem for DMPC purposes would require decomposing the coupling dynamics constraint. Decoupling of dynamics is done using primal decomposition
  in \cite{c10}, in which, linear systems are considered, and an optimal consensus problem is solved. In optimal consensus problems, multiple optimization variables are driven to the
- same value over iterations. In other words, consensus is achieved between different states of the system. Another approach based on dual decomposition, is discussed in \cite{c11}. In this, the variable splitting method is employed \cite{c8}, with the introduction of copies of states of neighboring vehicles which affect local states of a host vehicle. More robust methods based on the ADMM are formulated in \cite{c12}, which consider coupled objective functions in addition to coupled nonlinear dynamics. Another alternative is introduced in \cite{c13}, where the
+ same value over iterations. In other words, consensus is achieved between different states of the system. Another approach based on dual decomposition, is discussed in \cite{c11}. In this work, the variable splitting method of \cite{c8} is employed. According to this method, copies of states of a multi-agent system that are not local to a constituent vehicle are introduced as exogenous inputs on the vehicle. More robust methods based on the ADMM are formulated in \cite{c12}, which consider coupled objective functions in addition to coupled nonlinear dynamics. Another alternative is introduced in \cite{c13}, where the
  ADMM-consensus problem introduced in \cite{c14} is combined with the idea of introducing copies of neighboring states from \cite{c11}.
  \\
  \indent
- This work proposes a decentralized-consensus ADMM based DMPC scheme to solve the cooperative payload transportation problem. Decentralized-consensus is achieved by decoupling the 2nd ADMM step using a novel variable-copying scheme inspired from \cite{c9}. In order to reduce the communication and computation load, 1 ADMM iteration is performed per DMPC iteration, and the ADMM iterations are supported by inter-vehicle communication.
- \\ \\ \indent
- The rest of the paper is organized as follows: \\
+ This work extends the DMPC scheme introduced for the formation control problem in \cite{c16}, to the cooperative payload transportation problem. The main advantage of this scheme is that it achieves a decentralized-consensus in a dynamically coupled system, by decoupling the 2nd ADMM step using a novel variable-copying scheme. In order to reduce the communication and computation load, 1 ADMM iteration is performed per DMPC iteration, and the ADMM iterations are supported by inter-vehicle communication. The proposed scheme is implemented using a spline-based parameterization discussed in \cite{c16}, and a numerical validation of the algorithm is performed.
+\\ \indent
 Section  II  introduces  the  motion  planning  problem  for
 cooperative payload transportation problem, and Section III describes how
 this  problem  can  be  solved  in  a  online distributed manner. Results from simulations based on the proposed approach are presented in Section IV, and the results from an experimental validation in Section V.
 \section{PROBLEM FORMULATION}
 \subsection{System model}
-The dynamic system under consideration is modeled as multiple holonomic vehicles attached through 1D spring-damper elements to a common payload. The payload and the holonomic vehicles are abstracted as point masses, and are constrained to move in a 2D plane. Dynamic spring-mass-damper models are used to describe the system in the optimization problem. Friction is ignored in the model. The free length of the flexible elements is assumed to be $0$ m, resulting in the vehicles only applying a pulling force on the payload. A schematic of this model for 3 holonomic vehicles is shown in \ref{2D_schematic}.
+The dynamic system under consideration is modeled as multiple holonomic vehicles attached through 1D spring-damper elements to a common payload. The payload and the holonomic vehicles are abstracted as point masses, and are constrained to move in a 2D plane. Dynamic spring-mass-damper models are used to describe the system in the optimization problem. Coloumb friction is ignored in the model. The free length of the flexible elements is assumed to be $0$ m, resulting in the vehicles only applying a pulling force on the payload. A schematic of this model is shown in Figure \ref{2D_schematic}. The case of $N$=3 vehicles is considered here.
 
 \begin{figure}
   \centering
-  \includegraphics[scale=1]{figures/schematic.pdf}
+  \includegraphics[scale=0.7]{figures/schematic.pdf}
   \caption{Dynamic model decoupling}
   \label{2D_schematic}
 \end{figure}
 
 \subsection{Optimal control problem}
-This section discusses the formulation of optimization problem with the payload and vehicle trajectories as the optimization variables. The solution of this problem are the position trajectories the vehicles and the payload should follow in order to transport the payload to a location closest to its goal $x_d \in \mathbb{R}^2$ within the time horizon $T$ \textit{s} over which the problem is solved.
-The payload trajectory is represented by the vector ${x_0(t) \in \mathbb{R}^2}$ and that of each vehicle $i$ by ${x_i(t) \in \mathbb{R}^2}$.
- The formulation is shown in \eqref{label:central}. The case of $N$=3 vehicles is dealt here. Extension to problems with more vehicles can be done by modifying the \textit{intra-vehicle anti-collision} constraints.
-
+This section discusses the formulation of optimal control problem. The optimization variables are the payload and the vehicle trajectories. The solution of this problem are the trajectories that transport the payload to a location closest to its goal $x_d \in \mathbb{R}^2$ within the time horizon $T$ over which the problem is solved.
+The payload trajectory is represented by the vector ${x_0[0,T] \in \mathbb{R}^2}$ and that of each vehicle $i$ by ${x_i[0,T] \in \mathbb{R}^2}$.
+ The formulation is shown in \eqref{label:central}.
 \begin{equation}
   \label{label:central}
   \begin{aligned}
-    & \minimize_{\forall i:x_i(t),x_0(t)} && \mathlarger{\int_0^T} \mathlarger{||}x_0(t)-x_d\mathlarger{||}_1 dt \\
-    & \subj
-    && \ubar{l} \preceq f_i(x_0(t),x_i(t)) \preceq \bar{l}\\
-    &       && g(x_0(t),x_1(t),x_2(t),x_3(t)) = 0 \\
-    &        && h_{ij}(x_0(t),x_i(t),x_j(t)) \leq 0 \\
-    &        && \ubar{d} \leq d_i(x_i(t)) \leq \bar{d} \\
-    &       && x_0^{(k)}(0) = x_{0,0}^{(k)}, \quad x_i^{(k)}(0) = x_{0,i}^{(k)} \\
-       &       && x_0^{(k)}(T) = x_{T,0}^{(k)} , \quad x_i^{(k)}(T) = x_{T,i}^{(k)} \\
-       &       && k\in{0,1,2} \\
-    &                                && \forall t \in [0,T], \quad \forall i,j \in \{1,2,3\}, i \neq j
+    & \minimize_{x_0(.),x_1(.),x_2(.),x_3(.)} \qquad \mathlarger{\int_0^T} \mathlarger{||}x_0(t)-x_d\mathlarger{||}_1 dt \\
+    & \qquad \subj
+     \qquad \text{  } g(x_0(t),x_1(t),x_2(t),x_3(t)) = 0 \\
+    &	\qquad  \qquad \qquad \quad \quad \quad h_{ij}(x_0(t),x_i(t),x_j(t)) \leq 0 \\
+    &	\qquad  \qquad \qquad \quad \quad \quad \ubar{l} \preceq f_i(x_0(t),x_i(t)) \preceq \bar{l}\\   
+    &	\qquad  \qquad \qquad \quad \quad \quad d_i(x_i(t)) \preceq \bar{d} \\
+    &	\qquad  \qquad \qquad \quad \quad \quad x_0^{(k)}(0) = x_{0,0}^{(k)}, \quad x_i^{(k)}(0) = x_{0,i}^{(k)} \\
+       &	 \qquad \qquad \qquad \quad \quad \quad x_0^{(k)}(T) = x_{T,0}^{(k)} , \quad x_i^{(k)}(T) = x_{T,i}^{(k)} \\
+       &	 \qquad \qquad \qquad \quad \quad \quad k\in{0,1,2} \\
+    &	 \qquad \qquad \qquad \quad \quad \quad \forall t \in [0,T], \quad \forall i,j \in \{1,2,3\}, i \neq j
   \end{aligned}
 \end{equation}
-The function $f_i:\mathbb{R}^4\to\mathbb{R}^3$ consists of individual vehicle $i$'s dynamics, and flexible element $i$'s length. The lower and upper bounds on these quantities are captured in vectors $\ubar{l}$ and $\bar{l}$ respectively. The function $g:\mathbb{R}^8\to\mathbb{R}$ represents the payload dynamics.
-\\
- Intra-vehicle collisions are avoided using the third constraint, defined by the function $h_{ij}:\mathbb{R}^6\to\mathbb{R}$. It limits the angles between the vehicles to lie at greater than 90$\degree$ when subtended at the payload. It is reiterated that for $N$$>$$3$, this constraint should be reformulated.
- These functions are shown in \eqref{eq:cons}. Note that the indication of time dependence of the variables is dropped for ease of notation.
-
- \begin{equation}\label{eq:cons}
+As mentioned earlier, the coupled payload dynamics of the multi-agent system are modeled as constraints in the optimization problem. It is expressed in \eqref{g}. Note that the time dependence of the trajectories is dropped from \eqref{g} till \eqref{f} for ease of notation.
+\begin{equation}\label{g}
+\begin{aligned}
+g(x_0,x_1,x_2,x_3) &= m_0\ddot{x}_0 +  \mathlarger{\sum\limits_{i=1}^{3}}
+\begin{bmatrix}{c_i(\dot{x}_i-\dot{x}_0) + k_i(x_i - x_0)} \end{bmatrix}\\
+\end{aligned}
+\end{equation}
+\noindent
+Intra-vehicle collisions are avoided by the function $h_{ij}$, expressed in \eqref{h}. It limits the angles between the vehicles to lie at greater than 90$\degree$ when subtended at the payload. Unlike the complete coupled constraint $g$, this is a constraint involving nearest neighbors.
+ \begin{equation}\label{h}
+\begin{aligned}
+h_{ij}(x_0,x_i,x_j) &= \mathlarger{\langle} x_i - x_0,x_j - x_0 \mathlarger{\rangle}
+\end{aligned}
+\end{equation}
+The function $f_i$ consists of individual vehicle $i$'s dynamics, and flexible element $i$'s length. The lower and upper bounds on these quantities are captured in vectors $\ubar{l}$ and $\bar{l}$ respectively. This function is shown in \eqref{f}.
+ \begin{equation}\label{f}
  \begin{aligned}
  f_i(x_0,x_i) &=
  \begin{bmatrix}
    m_i\ddot{x}_i + c_i(\dot{x}_i-\dot{x}_0) + k_i(x_i-x_0) \\
-  (x_i-x_0)^T(x_i-x_0)
+  \mathlarger{\langle} x_i - x_0,x_i - x_0 \mathlarger{\rangle}
  \end{bmatrix} \\
- g(x_0,x_1,x_2,x_3) &= m_0\ddot{x}_0 +  \sum\limits_{i=1}^{3}
- \begin{bmatrix}{c_i(\dot{x}_i-\dot{x}_0) + k_i(x_i - x_0)} \end{bmatrix}\\
- h_{ij}(x_0(t),x_i(t),x_j(t)) &= \mathlarger{\langle} x_i(t) - x_0(t),x_j(t) - x_0(t) \mathlarger{\rangle}
+ \end{aligned}
+ \end{equation}
+ Absolute values of vehicle velocities and accelerations are expressed through the function $d_i$ shown in \eqref{d}, with the limits on these quantities captured in the vector $\bar{d}$.
+ \begin{equation}\label{d}
+ \begin{aligned}
+ d_i(x_i) &=
+ \begin{bmatrix}
+  \mathlarger{|}\dot{x}\mathlarger{|}^T &\mathlarger{|}\ddot{x}\mathlarger{|}^T
+ \end{bmatrix}^T \\
  \end{aligned}
  \end{equation}
  The rest of the constraints represent limits on vehicle velocities and accelerations, and initial and final conditions on the vehicle and payload position trajectories and higher derivatives.
 \section{Solution strategy}
 \subsection{Spline parameterization}
-Problem \eqref{label:central} represents an infinite dimensional problem, since the optimization variables $x_0(t)$ and $x_i(t)$ are infinite dimensional, and enforcing the constraints at all instances results in an infinite number of constraints. In order to make the problem numerically tractable, a B-spline based parameterization of the optimization variables is used, along the lines of \cite{c15}. The continuous optimization variables are hence represented as linear combinations of piecewise polynomial basis functions $b_k(t)$, as expressed in \eqref{spline}.
+Problem \eqref{label:central} represents an infinite dimensional problem, since the optimization variables $x_0(.)$ and $x_i(.)$ are infinite dimensional, and enforcing the constraints at all time results in an infinite number of constraints. In order to make the problem numerically tractable, a B-spline based parameterization of the optimization variables is used, along the lines of \cite{c15}. The continuous optimization variables are hence represented as linear combinations of piecewise polynomial B-spline basis functions $b_k(t)$, as expressed in \eqref{spline}.
 
 \begin{equation}\label{spline}
-x_i(t) = \sum\limits_{k=1}^{n} \cx_{i,k}b_k(t) = \cx_i^Tb(t) \quad \forall i \in \{1,.,N\}
+x_i(t) = \mathlarger{\sum\limits_{k=1}^{n}} \cx_{i,k}b_k(t) = \cx_i^Tb(t) \quad \forall i \in \{0,1,.,N\}
 \end{equation}
 
- The trajectories of each vehicle $i$ are consequently represented by the coefficient set $\cx_i$$=$ $\{\cx_{i,k}\}_{k=1}^{n}$ and those of the payload by $\cx_0$$=$$\{\cx_{0,k}\}_{k=1}^{n}$, for a chosen B-spline basis functions vector $b = [b_1,\ldots,b_n]^T$. Substituting these parameterizations in \eqref{label:central} results in an optimization problem with finite number of variables. A B-spline parameterization is chosen because of its convex hull property \cite{c15}, which dictates that the resultant spline function lies within the convex hull of the coefficients. This is because at every time instant over which the spline is defined, the basis functions correspond to a non-negative partition of unity. Hence, the constraints on an infinite dimensional spline can be imposed on the coefficients of the corresponding B-spline basis functions, resulting in a finite number of constraints. Since the constraint functions $f_i$,$g$ and $h_{ij}$ are composed of polynomial combinations of the splines $x_i(t)$ and $x_0(t)$ and their derivatives, the resultant splines' coefficients are polynomial combinations of $\cx_0$ and $\cx_i$. Following the convex hull property, these constraints are transformed to $\cf_i$,$\cg$ and $\ch_{ij}$ respectively.
-The resultant formulation is seen in \eqref{withparam}.
+ The trajectories of each vehicle $i$ are consequently represented by the coefficient set $\cx_i$$=$ $\{\cx_{i,k}\}_{k=1}^{n}$ and those of the payload by $\cx_0$$=$$\{\cx_{0,k}\}_{k=1}^{n}$, for a chosen B-spline basis functions vector $b = [b_1,\ldots,b_n]^T$. Substituting these parameterizations in \eqref{label:central} results in an optimization problem with finite number of variables. A B-spline parameterization is chosen because of its convex hull property \cite{c15}, which dictates that the resultant spline function lies within the convex hull of the coefficients. Hence, the constraints on an infinite dimensional spline can be imposed on the coefficients of the corresponding B-spline basis functions, resulting in a finite number of constraints. Since the constraint functions $f_i$,$g$ and $h_{ij}$ are composed of polynomial combinations of the splines $x_i(t)$ and $x_0(t)$ and their derivatives, the resultant functions are splines in a B-spline polynomial basis as well. The coefficients of these splines are polynomial combinations of $\cx_0$ and $\cx_i$. Following the convex hull property, these constraints are transformed to $\cf_i$,$\cg$ and $\ch_{ij}$ respectively, indicated in a sans-serif font.
+The resultant formulation is seen in \eqref{withparam}. 
 
  \begin{equation}
    \label{withparam}
    \begin{aligned}
      & \minimize_{\forall i:\cx_i,\cx_0} &&  \J(\cx_0) \\
      & \subj
-     && \ubar{l} \preceq \cf_i(\cx_0,\cx_i) \preceq \bar{l}\\
-     &       && \cg(\cx_0,\cx_1,\cx_2,\cx_3) = 0 \\
+     &      & \cg(\cx_0,\cx_1,\cx_2,\cx_3) = 0 \\
      &        && \ch_{ij}(\cx_0,\cx_i,\cx_j) \leq 0 \\
+     &	&& \ubar{l} \preceq \cf_i(\cx_0,\cx_i) \preceq \bar{l}\\
      &        && \cx_i \in \X_i \\
      &        && \cx_0 \in \X_0 \\
      &                                && \forall i,j \in \{1,2,3\}, i \neq j
    \end{aligned}
  \end{equation}
- The MPC updating scheme proposed in \cite{c16} for optimization variables expressed in a B-spline basis can be used on a centralized processor, provided it has access to all $\cx_i$ and $\cx_0$ variables. This scheme is reiterated in Algorithm~\ref{alg:mpc}. The vehicle and payload positions estimated at time $(k+1)\Delta T$ are incorporated into the feasible sets $\X_i$ and $\X_0$ while solving the problem for $\cx_i^{k+1}$ and $\cx_0^{k+1}$.
+ The MPC updating scheme proposed in \cite{c16} for optimization variables expressed in a B-spline basis can be used on a centralized processor, provided it has access to all $\cx_i$ and $\cx_0$ variables. This scheme is summarized in Algorithm~\ref{alg:mpc}. The vehicle and payload positions estimated at time $(k+1)\Delta T$ are incorporated into the feasible sets $\X_i$ and $\X_0$ while solving the problem for $\cx_i^{k+1}$ and $\cx_0^{k+1}$.
 
  \algblockdefx[Name]{Repeat}{Until}[1][Unknown]{\textbf{Repeat} #1}{\textbf{Until }}
  \begin{algorithm}[t]
@@ -188,16 +203,16 @@ The resultant formulation is seen in \eqref{withparam}.
 
 
  \subsection{Distributed formulation}
- The purpose of this section is to split the optimization problem \eqref{withparam} into 3 separate problems, one for each vehicle. This means that each problem should contain optimization variables local to the vehicle it is assigned. The first step towards the distributed formulation is the introduction of copies of the payload variables $\cx_0$ on each vehicle. These variables are represented by $\cx_{i0}$. The substitution of these variables results in 3 copies of the payload dynamics constraint $\cg$, each one being $\cg_i(\cx_{i0},\cx_i,\cx_j) = 0$, where $\cx_j = \{\cx_1,\cx_2,\cx_3\}\ominus \cx_i$.
+ The purpose of this section is to split the optimization problem \eqref{withparam} into 3 separate problems, one for each vehicle. This allows each vehicle to solve for its own trajectory, with the solution procedure being aided by communication between the vehicles. The first step towards the distributed formulation is the introduction of copies of the payload variables $\cx_0$ on each vehicle. These variables are represented by $\cx_{i0}$. The substitution of these variables results in 3 copies of the payload dynamics constraint $\cg$, each one being $\cg(\cx_{i0},\cx_i,\cx_j) = 0$, where $\cx_j = \{\cx_1,\cx_2,\cx_3\}\ominus \cx_i$.
  \\ \indent
- The payload dynamics constraint is further decoupled by borrowing ideas from \cite{c11}, which dictates that the variables $x_{j}(t)$ of vehicle $j$ which affect the dynamics of vehicle $i$ can be modeled as exogenous inputs $x_{ij}(t)$ acting on vehicle $i$. The new variables $x_{ij}(t)$ are hence local to vehicle $i$, and are parameterized by the spline coefficients $\cx_{ij}$. The payload dynamics constraint is thus further modified as $\cg_i(\cx_{i0},\cx_i,\cx_{ij}) = 0$. This substitution is supported by consensus constraints between  $\cx_{j}$ and $\cx_{ij}$. Following a modification of the consensus constraints presented in \cite{c9}, consensus variables $\cz_{ij}$ are introduced on each vehicle $i$, which act as a balance between $\cx_{j}$ and $\cx_{ij}$. The modified optimization problem with local copy variables, consensus variables, and consensus constraints is shown in \eqref{main_problem}.
+ The payload dynamics constraint is further decoupled by borrowing ideas from \cite{c11}, which dictates that the variables $x_{j}(t)$ of vehicle $j$ which affect the dynamics of vehicle $i$ can be modeled as exogenous inputs $x_{ij}(t)$ acting on vehicle $i$. The new variables $x_{ij}(t)$ are hence local to vehicle $i$, and are parameterized by the spline coefficients $\cx_{ij}$. The payload dynamics constraint is thus further modified as $\cg(\cx_{i0},\cx_i,\cx_{ij}) = 0$. This substitution is supported by consensus constraints between  $\cx_{j}$ and $\cx_{ij}$. Similar substitutions are performed in the anti-collision constraints $\ch_{ij}$. Following a modification of the consensus constraints presented in \cite{c9}, consensus variables $\cz_{ij}$ are introduced on each vehicle $i$, which act as a balance between $\cx_{j}$ and $\cx_{ij}$. The modified optimization problem with local copy variables, consensus variables, and consensus constraints is shown in \eqref{main_problem}.
    \begin{equation}
      \label{main_problem}
      \begin{aligned}
        & \minimize_{\forall i,j,i \neq j:\cx_i,\cx_{ij},\cz_{ij},\cx_{i0}} &&  \sum\limits_{i=1}^{3}\J(\cx_{i0}) \\
        & \subj
        && \ubar{l} \preceq \cf_i(\cx_{i0},\cx_i) \preceq \bar{l}\\
-       &       && \cg_i(\cx_{i0},\cx_i,\cx_{ij}) = 0 \\
+       &       && \cg(\cx_{i0},\cx_i,\cx_{ij}) = 0 \\
        &        && \ch_{ij}(\cx_{i0},\cx_i,\cx_{ij}) \leq 0 \\
        &         && \cx_{ij} = \cz_{ij},\, \cx_{j} = \cz_{ij} \\
        &        && \cx_i \in \X_i,\, \cx_{i0} \in \X_0 \\
@@ -206,20 +221,20 @@ The resultant formulation is seen in \eqref{withparam}.
    \end{equation}
 
   \indent
- The optimization problem \eqref{main_problem} can now be decoupled using the Alternating Direction Method of Multipliers (ADMM). The ADMM algorithm solves the dual of \eqref{main_problem}, after augumenting it with a quadratic term to improve convergence properties. To minimize duality gap, the fewest number of constraints are to be dualized according to \cite{c8}. Hence, only the consensus equality constraints are moved into the objective function to form the lagrangian. This appended objective function is seen in \eqref{Lagrangian}.
+ The optimization problem \eqref{main_problem} can now be decoupled using the Alternating Direction Method of Multipliers (ADMM). The ADMM algorithm solves the dual of \eqref{main_problem}, after augumenting it with a quadratic term to improve convergence properties. To minimize duality gap, the fewest number of constraints are dualized according to \cite{c8}. Hence, only the consensus equality constraints are moved into the objective function to form the lagrangian:
 
 
  \begin{equation}\label{Lagrangian}
    \begin{aligned}
    \mathcal{L}_\rho &=
-  {\mathlarger{\sum\limits_{i=1}^{N}}}
+  {\mathlarger{\sum\limits_{i=1}^{3}}}
   {\mathlarger{\mathlarger{(}}}\J_i(\cx_{i0}) +
- \mathlarger{\sum\limits_{j \neq i}} \mathlarger{(} \lambda_{ij}^T(\cx_{ij} - \cz_{ij}) + \cfrac{\rho}{2} \mathlarger{||}\cx_{ij} - \cz_{ij}\mathlarger{||}_2^2{{\mathlarger{)}}} \\ & \qquad \qquad \qquad \qquad
+ \mathlarger{\sum\limits_{j \neq i}} \mathlarger{(} \lambda_{ij}^T(\cx_{ij} - \cz_{ij}) + \cfrac{\rho}{2} \mathlarger{||}\cx_{ij} - \cz_{ij}\mathlarger{||}_2^2{{\mathlarger{)}}} \\ & \qquad \qquad \qquad
   + \mathlarger{\sum\limits_{j \neq i}} \mathlarger{(} \mu_{ij}^T(\cx_{j} - \cz_{ij}) +
    \cfrac{\rho}{2} \mathlarger{||}\cx_{j} - \cz_{ij}\mathlarger{||}_2^2 \mathlarger{)}\mathlarger{\mathlarger{\mathlarger{)}}}
    \\
-   &= {\mathlarger{\sum\limits_{i=1}^{N}}}  \mathcal{L}_{\rho,i} (\cx_{i0},\cx_{ij},\cz_{ij},\lambda_{ij},\cx_{j},\mu_{ij}) \\
-   &= {\mathlarger{\sum\limits_{i=1}^{N}}}  \mathcal{L}_{\rho,i} (\cx_{i0},\cx_{ij},\cz_{ij},\lambda_{ij},\cx_{i},\cz_{ji},\mu_{ji})
+   &= {\mathlarger{\sum\limits_{i=1}^{3}}}  \mathcal{L}_{\rho,i} (\cx_{i0},\cx_{ij},\cz_{ij},\lambda_{ij},\cx_{j},\cz_{ij},\mu_{ij}) \\
+   &= {\mathlarger{\sum\limits_{i=1}^{3}}}  \mathcal{L}_{\rho,i} (\cx_{i0},\cx_{ij},\cz_{ij},\lambda_{ij},\cx_{i},\cz_{ji},\mu_{ji})
    \end{aligned}
    \end{equation}
 The dual variables introduced in the Lagrangian corresponding to the equality constraints are $\lambda_{ij}$ and $\mu_{ij}$. The last equality in \eqref{Lagrangian} is valid due to the bidirectionality of interaction amongst the vehicles: variables on vehicle $i$ affecting the dynamics of vehicle $j$ correspond to the variables on vehicle $j$ affecting dynamics of vehicle $i$.
@@ -275,11 +290,11 @@ Solving the optimization problem \eqref{withparam} till convergence will require
 \end{algorithm}
 \\
 \indent
-The algorithm dictates that first, a few ADMM iterations be performed to find the first set of primal and dual variables. The primal $\cx_{i}$ variables are then interpreted in terms of the trajectories $x_i(t)$ on each vehicle $i$, and the tracking of these trajectories begins. According to the spline-MPC scheme discussed in \cite{c16}, $\hat{x}_i(\Delta T)$ and $\hat{x}_{i0}(\Delta T)$ are estimated locally on each vehicle, with perfectly tracked $x_{ij}(t)$ as the exogenous inputs into the local model. These estimates are passed as initial conditions into the MPC problem solving the trajectories from time $\Delta T$ s. This is followed by the usual 3 ADMM steps, with steps 7 and 9 for calculating the primal variables, and 10 for the dual variables. Since variables from the previous ADMM iteration are used in the current iteration, the spline coefficients are transformed to represent the spline in the current time frame, as discussed in \cite{c16}. Step 6 of the algorithm deals with this transformation. Step 9 is the direct least squares solution of the second ADMM step to update the $\cz_{ij}$ variables, and the corresponding problem is shown in \eqref{z_step}.
+The algorithm dictates that first, a few ADMM iterations be performed to find the first set of primal and dual variables. The primal $\cx_{i}$ variables are then interpreted in terms of the trajectories $x_i(t)$ on each vehicle $i$, and the tracking of these trajectories begins. According to the spline-MPC scheme discussed in \cite{c16}, $\hat{x}_i(\Delta T)$ and $\hat{x}_{i0}(\Delta T)$ are estimated locally on each vehicle, with perfectly tracked $x_{ij}(t)$ as the exogenous inputs into the local model. These estimates are passed as initial conditions into the MPC problem solving the trajectories from time $\Delta T$. This is followed by the usual 3 ADMM steps, with steps 7 and 9 for calculating the primal variables, and 10 for the dual variables. Since variables from the previous ADMM iteration are used in the current iteration, the spline coefficients are transformed to represent the spline in the current time frame, as discussed in \cite{c16}. Step 6 of the algorithm deals with this transformation. Step 9 is the direct least squares solution of the second ADMM step to update the $\cz_{ij}$ variables, and the corresponding problem is shown in \eqref{z_step}.
 \begin{equation}
 \label{z_step}
 \begin{aligned} \cz_{ij}^{k+1} &:=
- \argmin_{\cz_{ij}} \quad (\tilde{\lambda}^k_{ij})^T(\cx^{k+1}_{ij} - \cz_{ij}) + \cfrac{\rho}{2} \mathlarger{||}\cx^{k+1}_{ij} - \cz_{ij}\mathlarger{||}_2^2{{}} \\ & \qquad \qquad \qquad \qquad
+ \argmin_{\cz_{ij}} \quad (\tilde{\lambda}^k_{ij})^T(\cx^{k+1}_{ij} - \cz_{ij}) + \cfrac{\rho}{2} \mathlarger{||}\cx^{k+1}_{ij} - \cz_{ij}\mathlarger{||}_2^2{{}} \\ & \qquad \quad \quad \quad
 + (\tilde{\mu}^k_{ij})^T(\cx^{k+1}_{j} - \cz_{ij}) +
 \cfrac{\rho}{2} \mathlarger{||}\cx^{k+1}_{j} - \cz_{ij}\mathlarger{||}_2^2 \mathlarger{}
 \end{aligned}
