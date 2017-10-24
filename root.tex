@@ -13,6 +13,7 @@
 \usepackage[font={small}]{caption}
 \usepackage{picins}
 \usepackage{cleveref}
+\usepackage{array}
 
 % Commands
 \newcommand{\ubar}[1]{\text{\b{$#1$}}}
@@ -128,7 +129,7 @@ The payload trajectory is represented by the vector ${x_0[0,T] \in \mathbb{R}^2}
     &	 \qquad \qquad \qquad \quad \quad \quad \forall t \in [0,T], \quad \forall i,j \in \{1,2,3\}, i \neq j
   \end{aligned}
 \end{equation}
-As mentioned earlier, the coupled payload dynamics of the multi-agent system are modeled as constraints in the optimization problem. It is expressed in \eqref{g}. Note that the time dependence of the trajectories is dropped from \eqref{g} till \eqref{f} for ease of notation.
+As mentioned earlier, the coupled payload dynamics of the multi-agent system are modeled as constraints in the optimization problem. It is expressed in \eqref{g}. Note that the time dependence of the trajectories is dropped from \eqref{g} till \eqref{f} for ease of notation.The parameters $m_i$ and $m_0$ represent vehicle $i$'s and payload's mass respectively, and $c_i$ and $k_i$ represent damping and stiffness coefficients of flexible element $i$. 
 \begin{equation}\label{g}
 \begin{aligned}
 g(x_0,x_1,x_2,x_3) &= m_0\ddot{x}_0 +  \mathlarger{\sum\limits_{i=1}^{3}}
@@ -142,7 +143,7 @@ Intra-vehicle collisions are avoided by the function $h_{ij}$, expressed in \eqr
 h_{ij}(x_0,x_i,x_j) &= \mathlarger{\langle} x_i - x_0,x_j - x_0 \mathlarger{\rangle}
 \end{aligned}
 \end{equation}
-The function $f_i$ consists of individual vehicle $i$'s dynamics, and flexible element $i$'s length. The lower and upper bounds on these quantities are captured in vectors $\ubar{l}$ and $\bar{l}$ respectively. This function is shown in \eqref{f}.
+The function $f_i$ consists of individual vehicle $i$'s dynamics, and flexible element $i$'s length. The lower and upper bounds on these quantities are captured in vectors $\ubar{l}$ and $\bar{l}$ respectively. This function is shown in \eqref{f}. 
  \begin{equation}\label{f}
  \begin{aligned}
  f_i(x_0,x_i) &=
@@ -303,6 +304,28 @@ The algorithm dictates that first, a few ADMM iterations be performed to find th
 \indent
 From this least squares problem, it can be seen the consensus variables $\cz_{ij}$ are pushed between the \textit{expected} $\cx_{ij}$ variables and the \textit{actual} $\cx_j$ variables, acting as a balance between them. In the first ADMM step (Step 7), the reverse occurs in that $\cx_{ij}$ and $\cx_j$ are pushed towards the previous \textit{compromise} $\cz_{ij}$ variables. Thus, over MPC (and hence, ADMM) iterations, a consensus is achieved between $\cx_{ij}$ and $\cx_j$, resulting the problem dynamics being satisfied.
 
+\section{Simulation results}
+The DMPC strategy proposed in Algorithm~\ref{alg:dmpc} is numerically validated for the multi-agent system with parameters and initial conditions as follows:
+ \begin{center}
+ 	\begin{tabular}{ | m{3cm} | m{2.5cm}| } 
+ 		\hline
+ 		Parameters & 
+ 			\begin{center}
+ 				\begin{tabular}{ m{0.5cm} | m{2cm} } $m_i$ & 2Kg \\ $c_i$ & 20Ns/m \\ $k_i$ & 50N/m \\ 
+ 				\end{tabular}
+ 			\end{center} \\
+ 		\hline	
+ 		Initial conditions & 
+ 		\begin{center}
+ 			\begin{tabular}{ m{0.5cm} | m{2cm} } $x_{0,0}$ & [1.0,1.0]$^T$ \\ 	
+ 												 $x_{0,1}$ & [0.8,0.8]$^T$ \\
+ 												 $x_{0,2}$ & [0.8,1.2]$^T$ \\
+ 												 $x_{0,3}$ & [1.4,1.0]$^T$ \\
+ 			\end{tabular}
+ 		\end{center} \\
+ 		\hline
+ 	\end{tabular}
+ \end{center}
 
 
 \begin{thebibliography}{99}
