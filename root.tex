@@ -14,6 +14,7 @@
 \usepackage{picins}
 \usepackage{cleveref}
 \usepackage{array}
+\usepackage{float}
 
 % Commands
 \newcommand{\ubar}[1]{\text{\b{$#1$}}}
@@ -291,7 +292,7 @@ Solving the optimization problem \eqref{withparam} till convergence will require
 \end{algorithm}
 \\
 \indent
-The algorithm dictates that first, a few ADMM iterations be performed to find the first set of primal and dual variables. The primal $\cx_{i}$ variables are then interpreted in terms of the trajectories $x_i(t)$ on each vehicle $i$, and the tracking of these trajectories begins. According to the spline-MPC scheme discussed in \cite{c16}, $\hat{x}_i(\Delta T)$ and $\hat{x}_{i0}(\Delta T)$ are estimated locally on each vehicle, with perfectly tracked $x_{ij}(t)$ as the exogenous inputs into the local model. These estimates are passed as initial conditions into the MPC problem solving the trajectories from time $\Delta T$. This is followed by the usual 3 ADMM steps, with steps 7 and 9 for calculating the primal variables, and 10 for the dual variables. Since variables from the previous ADMM iteration are used in the current iteration, the spline coefficients are transformed to represent the spline in the current time frame, as discussed in \cite{c16}. Step 6 of the algorithm deals with this transformation. Step 9 is the direct least squares solution of the second ADMM step to update the $\cz_{ij}$ variables, and the corresponding problem is shown in \eqref{z_step}.
+The algorithm dictates that first, a few ADMM iterations be performed to find the first set of primal and dual variables. The primal $\cx_{i}$ variables are then interpreted in terms of the trajectories $x_i(t)$ on each vehicle $i$, and the tracking of these trajectories begins. According to the spline-MPC scheme discussed in \cite{c16}, $\hat{x}_i(\Delta T)$ and $\hat{x}_{i0}(\Delta T)$ are estimated locally on each vehicle, with perfectly tracked $x_{ij}(t)$ as the exogenous inputs into the local model. These estimates are passed as initial conditions into the MPC problem solving the trajectories from time $\Delta T$. This is followed by the usual 3 ADMM steps, with steps 7 and 9 for calculating the primal variables, and step 10 for the dual variables. Since variables from the previous ADMM iteration are used in the current iteration, the spline coefficients are transformed to represent the spline in the current time frame, as discussed in \cite{c16}. Step 6 of the algorithm deals with this transformation. Step 9 is the direct least squares solution of the second ADMM step to update the $\cz_{ij}$ variables, and the corresponding problem is shown in \eqref{z_step}.
 \begin{equation}
 \label{z_step}
 \begin{aligned} \cz_{ij}^{k+1} &:=
@@ -305,28 +306,66 @@ The algorithm dictates that first, a few ADMM iterations be performed to find th
 From this least squares problem, it can be seen the consensus variables $\cz_{ij}$ are pushed between the \textit{expected} $\cx_{ij}$ variables and the \textit{actual} $\cx_j$ variables, acting as a balance between them. In the first ADMM step (Step 7), the reverse occurs in that $\cx_{ij}$ and $\cx_j$ are pushed towards the previous \textit{compromise} $\cz_{ij}$ variables. Thus, over MPC (and hence, ADMM) iterations, a consensus is achieved between $\cx_{ij}$ and $\cx_j$, resulting the problem dynamics being satisfied.
 
 \section{Simulation results}
-The DMPC strategy proposed in Algorithm~\ref{alg:dmpc} is numerically validated for the multi-agent system with parameters and initial conditions as follows:
+The DMPC strategy proposed in Algorithm~\ref{alg:dmpc} is numerically validated for the multi-agent system with parameters as follows:
  \begin{center}
- 	\begin{tabular}{ | m{3cm} | m{2.5cm}| } 
+ 	\begin{tabular}{ | m{1.5cm} || m{2.5cm}| } 
  		\hline
  		Parameters & 
  			\begin{center}
- 				\begin{tabular}{ m{0.5cm} | m{2cm} } $m_i$ & 2Kg \\ $c_i$ & 20Ns/m \\ $k_i$ & 50N/m \\ 
+ 				\begin{tabular}{ m{0.5cm} | m{2cm} } $m_0$ & 5Kg \\ $m_i$ & 2Kg \\ $c_i$ & 20Ns/m \\ $k_i$ & 50N/m \\ 
  				\end{tabular}
  			\end{center} \\
  		\hline	
- 		Initial conditions & 
- 		\begin{center}
- 			\begin{tabular}{ m{0.5cm} | m{2cm} } $x_{0,0}$ & [1.0,1.0]$^T$ \\ 	
- 												 $x_{0,1}$ & [0.8,0.8]$^T$ \\
- 												 $x_{0,2}$ & [0.8,1.2]$^T$ \\
- 												 $x_{0,3}$ & [1.4,1.0]$^T$ \\
- 			\end{tabular}
- 		\end{center} \\
- 		\hline
  	\end{tabular}
  \end{center}
 
+\begin{figure*}[h]
+	\centering
+	\setlength{\tabcolsep}{0.1em}
+	\begin{tabular}[t]{rrrrr}
+		\includegraphics[scale=0.245]{figures/no_obst.pdf}
+	\end{tabular}
+	\caption{Motion trajectories for the payload and holonomic vehicles within the multi-agent system. The dotted lines represent payload trajectory. The gray lines indicate the computed trajectories to follow. The black lines represent the covered paths.}
+	\label{trajectories}
+\end{figure*}
+The velocities and accelerations of the vehicles are enforced to start from 0$m/s$ and 0$m/s^2$ respectively. The initial positions have been chosen such that the payload starts from a balanced state. The vehicle and payload trajectories are parameterized as B-splines with cubic basis functions having 10 knot intervals. The time horizon is $T$ = 5s, and each DMPC update happens every $\Delta T$ = 0.1s. The ADMM penalty parameter is $\rho$ = 0.5. The spline coefficients are defined as CasADi symbols. The optimization problem in step 7 of Algorithm~\ref{alg:dmpc} is solved using the interior point solver IPOPT, for which the exact Jacobians and Hessians are provided by CasADi. The initial conditions for each DMPC update in the simulations are obtained following the assumption of perfect tracking of trajectories calculated in the previous DMPC update by the vehicles. 
+\\
+\indent
+The motion trajectories of the vehicles and payload upon implementation of Algorithm~\ref{alg:dmpc} to control the multi-agent system are shown in Figure \ref{trajectories}. The darker lines represent trajectories that have been traversed by the vehicles and payload, and the lighter lines represent future trajectories. The corresponding velocity trajectories tracked by the vehicles are shown in Figure \ref{velocities}. The velocities do not reach their limit of 1 m/s. This is because the lagrangian function also tries to attain consensus between expected and actual vehicle trajectories in addition to pushing the payload towards the goal location.
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.50]{figures/velocities.pdf}
+	\caption{Velocity trajectories of the vehicles. Dark line at 1 m/s indicates constraint.}
+	\label{velocities}
+\end{figure}
+\indent
+ Reducing the value of ADMM penalty parameter $\rho$ increases the vehicle velocities, but the dynamics get violated due to a lack of consensus. 
+Since consensus constraints such as $\cx_{i0} = \cx_{j0}$ are not imposed, the payload positions are free to evolve according to the local dynamics of each vehicle. However, the complete multi-agent system dynamics are satisfied only if the local payload position copies converge towards each other. Hence, convergence of local payload positions towards each other over successive ADMM iterations is an indicator dynamics satisfaction. This convergence is monitored by using distance metrics between the payload trajectory coefficients $\cx_{10}$, $\cx_{20}$ and $\cx_{30}$,  calculating a measure of dynamics error $\epsilon_0$ as:
+\begin{equation}
+\epsilon_0 = \mathlarger{\sum_{i=1}^{3}} \mathlarger{\sum_{j \neq i}} \mathlarger{\langle} \cx_{i0} - \cx_{j0},\cx_{i0} - \cx_{j0} \mathlarger{\rangle}
+\end{equation}
+For the trajectories shown in Figure \ref{trajectories}, the corresponding $\epsilon_{0}$ is shown in Figure \ref{error}.
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.40]{figures/epsilon.pdf}
+	\caption{Error in system dynamics.}
+	\label{error}
+\end{figure}
+\indent
+\begin{figure*}[h]
+	\centering
+	\setlength{\tabcolsep}{0.1em}
+	\begin{tabular}[t]{rrrrr}
+		\includegraphics[scale=0.80]{figures/obstacle.pdf}
+	\end{tabular}
+	\caption{Motion trajectories of the vehicles and payload in the presence of a stationary obstacle.}
+	\label{obstacle}
+\end{figure*}
+Since all vehicles start with the same initial value of the payload position, the coefficients match resulting in $\epsilon_0$=0. However, the local payload copies diverge from each other during the initial few DMPC iterations, and before halt of the payload. This is because each vehicle $i$ is agnostic of each other vehicle $j$'s force limits. At the start, the vehicle $i$ requests a trajectory $\cx_{ij}$ of vehicle $j$ which results in an immediate pull of the payload with a high force. Towards the end, the opposite occurs with each vehicle $i$ requesting a $\cx_{ij}$ pulling the payload to an immediate halt. However, vehicle $j$ can
+ realistically only provide a trajectory $\cx_j$ while respecting its own constraints. This trajectory is different from the requested $\cx_{ij}$, resulting in a lack of consensus. This leads to an increase in disagreement about the payload position between the vehicles, increasing the value of $\epsilon_0$. This disagreement is however penalized through the consensus variables $\cz_{ij}$, and dual variables $\lambda_{ij}$ and $\mu_{ij}$. The penalization results in the vehicles achieving consensus over the payload position over successive DMPC iterations, reducing the value of $\epsilon_0$. Hence, it is concluded that the dynamics of the complete multi-agent system are satisfied. The number of iterations after which consensus is achieved can be reduced by increasing the value of the ADMM penalty parameter $\rho$. However, this results in lower vehicle velocities indicating a loss in optimality with respect to payload transportation.
+ 
+ \section{Conclusion and future work}
+This paper presents an algorithm to solve the multi-vehicle payload transportation problem in a Distributed Model Predictive Control (DMPC) framework. The optimization problem underlying the control problem is decoupled over the multiple vehicles based on the Alternating Direction Method of Multipliers (ADMM). 
 
 \begin{thebibliography}{99}
 
