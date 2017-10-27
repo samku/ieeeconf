@@ -37,6 +37,8 @@
 \newlength\figheight
 \setlength\figheight{5cm}
 
+\bibliographystyle{ieeetr}
+
 %\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
 
 \IEEEoverridecommandlockouts                              % This command is only needed if
@@ -347,7 +349,7 @@ Since consensus constraints such as $\cx_{i0} = \cx_{j0}$ are not imposed, the p
 For the trajectories shown in Figure \ref{trajectories}, the corresponding $\epsilon_{0}$ is shown in Figure \ref{error}.
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.40]{figures/epsilon.pdf}
+	\includegraphics[scale=0.33]{figures/epsilon.pdf}
 	\caption{Error in system dynamics.}
 	\label{error}
 \end{figure}
@@ -362,56 +364,61 @@ For the trajectories shown in Figure \ref{trajectories}, the corresponding $\eps
 	\label{obstacle}
 \end{figure*}
 Since all vehicles start with the same initial value of the payload position, the coefficients match resulting in $\epsilon_0$=0. However, the local payload copies diverge from each other during the initial few DMPC iterations, and before halt of the payload. This is because each vehicle $i$ is agnostic of each other vehicle $j$'s force limits. At the start, the vehicle $i$ requests a trajectory $\cx_{ij}$ of vehicle $j$ which results in an immediate pull of the payload with a high force. Towards the end, the opposite occurs with each vehicle $i$ requesting a $\cx_{ij}$ pulling the payload to an immediate halt. However, vehicle $j$ can
- realistically only provide a trajectory $\cx_j$ while respecting its own constraints. This trajectory is different from the requested $\cx_{ij}$, resulting in a lack of consensus. This leads to an increase in disagreement about the payload position between the vehicles, increasing the value of $\epsilon_0$. This disagreement is however penalized through the consensus variables $\cz_{ij}$, and dual variables $\lambda_{ij}$ and $\mu_{ij}$. The penalization results in the vehicles achieving consensus over the payload position over successive DMPC iterations, reducing the value of $\epsilon_0$. Hence, it is concluded that the dynamics of the complete multi-agent system are satisfied. The number of iterations after which consensus is achieved can be reduced by increasing the value of the ADMM penalty parameter $\rho$. However, this results in lower vehicle velocities indicating a loss in optimality with respect to payload transportation.
+ realistically only provide a trajectory $\cx_j$ while respecting its own constraints. This trajectory is different from the requested $\cx_{ij}$, resulting in a loss of consensus. The local payload dynamics this evolve with a different set of inputs on each vehicle, increasing the value of $\epsilon_0$. This disagreement is however penalized through the consensus variables $\cz_{ij}$, and dual variables $\lambda_{ij}$ and $\mu_{ij}$. The penalization results in the vehicles achieving consensus on the payload position over successive DMPC iterations, reducing the value of $\epsilon_0$. Hence, it is concluded that the dynamics of the complete multi-agent system are satisfied. The number of iterations after which consensus is achieved can be reduced by increasing the value of the ADMM penalty parameter $\rho$. However, this results in lower vehicle velocities indicating a loss in optimality with respect to payload transportation.
+ \\
+ \indent
+Static obstacle avoidance behavior is obtained by adding additional spline variables representing separating hyperplane coefficients, as discussed in \cite{c17}. Each vehicle $i$ is assigned a set of these variables $a_i(t)$ and $b_i(t)$, for which the separating hyperplane constraints are defined. These constraints make sure that the trajectories $x_i(t)$, $x_{i0}(t)$ and $x_{ij}(t)$ lie on one side of the separating hyperplane parameterized by $a_i(t)$ and $b_i(t)$, and the obstacle lies on the other side of the hyperplane. The trajectories generated with this behavior is shown in Figure \ref{obstacle}. Near the obstacle, there is a loss of consensus between $\cx_{ij}$ and $\cx_{j}$, which is regained over successive ADMM iterations. Like before, the rate at which the consensus is regained can be controlled by tuning the ADMM penalty parameter $\rho$.
  
  \section{Conclusion and future work}
-This paper presents an algorithm to solve the multi-vehicle payload transportation problem in a Distributed Model Predictive Control (DMPC) framework. The optimization problem underlying the control problem is decoupled over the multiple vehicles based on the Alternating Direction Method of Multipliers (ADMM). 
+This paper presents an algorithm to solve the multi-vehicle payload transportation problem in a Distributed Model Predictive Control (DMPC) framework. The optimization problem underlying the control problem is decoupled over the multiple vehicles based on the Alternating Direction Method of Multipliers (ADMM). A novel variable copying scheme is adopted, which results in a decentralized consensus formulation for a dynamically coupled system. Results based on numerical simulations are observed, and consensus on payload position is noted leading to the conclusion that the coupled dynamics are satisfied over successive iterations of the DMPC algorithm. Future work includes modifying the algorithm to include dynamics considering free length of the flexible elements, which makes practical validation with real-life holonomic vehicles feasible. Further modifications can be done to the algorithm to analyze the effects of additional constraints imposing consensus on local payload copies and separating hyperplane variables on dynamic behavior.
 
 \begin{thebibliography}{99}
-
-\bibitem{c1} D. Williams and O. Khatib, "The virtual linkage: a model for internal forces in multi-grasp manipulation," [1993] Proceedings IEEE International Conference on Robotics and Automation, Atlanta, GA, 1993, pp. 1025-1030 vol.1.
-doi: 10.1109/ROBOT.1993.292110
-\bibitem{c2}O. Khatib. Force strategies for cooperative tasks in multiple mobile manipulation
-systems. Giralt G., Hirzinger G. (eds) Robotics Research. Springer, London, 1996.
-\bibitem{c3}H. G. Tanner, K. J. Kyriakopoulos, and N. J. Krikelis. Modeling of multiple mobile
-manipulators handling a common deformable object. Journal of Robotic Systems,
-15(11):599?623, 1998.
-\bibitem{c4}R. Ritz and R. D?Andrea. Carrying a flexible payload with multiple flying vehicles.
-In 2013 IEEE/RSJ International Conference on Intelligent Robots and Systems, pages
-3465?3471, Nov 2013.
-\bibitem{c5}S. Liu, D. Sun, and C. Zhu. Coordinated motion planning for multiple mobile robots
-along designed paths with formation requirement. IEEE/ASME Transactions on
-Mechatronics, 16(6):1021?1031, Dec 2011.
-\bibitem{c6} M. Saska, V. Von ?
-asek, T. Krajn ??k, L. P?reu?
-cil, Coordination
-and navigation of heterogeneous mav?ugv formations localized
-by a hawk-eye-like approach under a model predictive control
-scheme, The International Journal of Robotics Research 33 (10)
-(2014) 1393?1412.
-\bibitem{c7} S. Boyd, L. Xiao, and A. Mutapcic. Notes on decomposition methods, October 2003.
-\bibitem{c8} R. L. Raffard, C. J. Tomlin, and S. P. Boyd. Distributed optimization for cooperative
-agents: application to formation flight. In 2004 43rd IEEE Conference on Decision
-and Control (CDC) (IEEE Cat. No.04CH37601), volume 3, pages 2453?2459 Vol.3, Dec
-2004.
-\bibitem{c9} R. V. Parys and G. Pipeleers. Online distributed motion planning for multi-vehicle
-systems. In 2016 European Control Conference (ECC), pages 1580?1585, June 2016.
-\bibitem{c10} B. Johansson, A. Speranzon, M. Johansson, and K. H. Johansson. On decentralized
-negotiation of optimal consensus. Automatica, 44(4):1175 ? 1179, 2008.
-\bibitem{c11} P. Giselsson and A. Rantzer. Distributed model predictive control with suboptimality
-and stability guarantees. In 49th IEEE Conference on Decision and Control. pp.
-7272-7277.
-\bibitem{c12} F. Farokhi, I. Shames, and K. H. Johansson. Distributed MPC Via Dual Decompo-
-sition and Alternative Direction Method of Multipliers, pages 115?131. Springer
-Netherlands, Dordrecht, 2014.
-\bibitem{c13} T. H. Summers and J. Lygeros. Distributed model predictive consensus via the
-alternating direction method of multipliers. In 2012 50th Annual Allerton Conference
-on Communication, Control, and Computing (Allerton), pages 79?84, Oct 2012.
-\bibitem{c14} S. Boyd, N. Parikh, E. Chu, B. Peleato, and J. Eckstein. Distributed optimization and
-statistical learning via the alternating direction method of multipliers. Found. Trends
-Mach. Learn., 3(1):1?122, Jan. 2011.
-\bibitem{c15} W. Van Loock, G. Pipeleers, J. Swevers, B-spline parameterized
-optimal motion trajectories for robotic systems with guaranteed constraint satisfaction, Mechanical Sciences 6 (2) (2015) 163-171.
-\bibitem{c16} Ruben Van Parys, Goele Pipeleers, Distributed MPC for multi-vehicle systems moving in formation, In Robotics and Autonomous Systems, Volume 97, 2017, Pages 144-152, ISSN 0921-8890, https://doi.org/10.1016/j.robot.2017.08.009.
+	
+	\bibitem{c1} D. Williams and O. Khatib, "The virtual linkage: a model for internal forces in multi-grasp manipulation," [1993] Proceedings IEEE International Conference on Robotics and Automation, Atlanta, GA, 1993, pp. 1025-1030 vol.1.
+	doi: 10.1109/ROBOT.1993.292110
+	\bibitem{c2}O. Khatib. Force strategies for cooperative tasks in multiple mobile manipulation
+	systems. Giralt G., Hirzinger G. (eds) Robotics Research. Springer, London, 1996.
+	\bibitem{c3}H. G. Tanner, K. J. Kyriakopoulos, and N. J. Krikelis. Modeling of multiple mobile
+	manipulators handling a common deformable object. Journal of Robotic Systems,
+	15(11):599?623, 1998.
+	\bibitem{c4}R. Ritz and R. D?Andrea. Carrying a flexible payload with multiple flying vehicles.
+	In 2013 IEEE/RSJ International Conference on Intelligent Robots and Systems, pages
+	3465?3471, Nov 2013.
+	\bibitem{c5}S. Liu, D. Sun, and C. Zhu. Coordinated motion planning for multiple mobile robots
+	along designed paths with formation requirement. IEEE/ASME Transactions on
+	Mechatronics, 16(6):1021?1031, Dec 2011.
+	\bibitem{c6} M. Saska, V. Von ?
+	asek, T. Krajn ??k, L. P?reu?
+	cil, Coordination
+	and navigation of heterogeneous mav?ugv formations localized
+	by a hawk-eye-like approach under a model predictive control
+	scheme, The International Journal of Robotics Research 33 (10)
+	(2014) 1393?1412.
+	\bibitem{c7} S. Boyd, L. Xiao, and A. Mutapcic. Notes on decomposition methods, October 2003.
+	\bibitem{c8} R. L. Raffard, C. J. Tomlin, and S. P. Boyd. Distributed optimization for cooperative
+	agents: application to formation flight. In 2004 43rd IEEE Conference on Decision
+	and Control (CDC) (IEEE Cat. No.04CH37601), volume 3, pages 2453?2459 Vol.3, Dec
+	2004.
+	\bibitem{c9} R. V. Parys and G. Pipeleers. Online distributed motion planning for multi-vehicle
+	systems. In 2016 European Control Conference (ECC), pages 1580?1585, June 2016.
+	\bibitem{c10} B. Johansson, A. Speranzon, M. Johansson, and K. H. Johansson. On decentralized
+	negotiation of optimal consensus. Automatica, 44(4):1175 ? 1179, 2008.
+	\bibitem{c11} P. Giselsson and A. Rantzer. Distributed model predictive control with suboptimality
+	and stability guarantees. In 49th IEEE Conference on Decision and Control. pp.
+	7272-7277.
+	\bibitem{c12} F. Farokhi, I. Shames, and K. H. Johansson. Distributed MPC Via Dual Decompo-
+	sition and Alternative Direction Method of Multipliers, pages 115?131. Springer
+	Netherlands, Dordrecht, 2014.
+	\bibitem{c13} T. H. Summers and J. Lygeros. Distributed model predictive consensus via the
+	alternating direction method of multipliers. In 2012 50th Annual Allerton Conference
+	on Communication, Control, and Computing (Allerton), pages 79?84, Oct 2012.
+	\bibitem{c14} S. Boyd, N. Parikh, E. Chu, B. Peleato, and J. Eckstein. Distributed optimization and
+	statistical learning via the alternating direction method of multipliers. Found. Trends
+	Mach. Learn., 3(1):1?122, Jan. 2011.
+	\bibitem{c15} W. Van Loock, G. Pipeleers, J. Swevers, B-spline parameterized
+	optimal motion trajectories for robotic systems with guaranteed constraint satisfaction, Mechanical Sciences 6 (2) (2015) 163-171.
+	\bibitem{c16} Ruben Van Parys, Goele Pipeleers, Distributed MPC for multi-vehicle systems moving in formation, In Robotics and Autonomous Systems, Volume 97, 2017, Pages 144-152, ISSN 0921-8890, https://doi.org/10.1016/j.robot.2017.08.009.
+	\bibitem{c17} T. Mercy, W. Van Loock and G. Pipeleers, "Real-time motion planning in the presence of moving obstacles," 2016 European Control Conference (ECC), Aalborg, 2016, pp. 1586-1591.
 \end{thebibliography}%
+
 \end{document}
