@@ -90,7 +90,7 @@ This paper presents a control strategy for multiple vehicles that cooperatively 
 
 Payload transportation tasks are ubiquitous in industrial environments. These payloads can vary greatly in weights, necessitating multiple transportation solutions of different payload capacities within the same logistics structure. An alternative to this would be to use multiple vehicles to cooperatively tow a payload, with the number of vehicles chosen according to the towing requirements. To enable such a multi-agent system to work autonomously and transport the payload to a desired location, control strategies are required which perform coordinated motion of the vehicles.
 \\
-\indent Transportation of objects with multiple vehicles is a standard problem in robotics and control. Some of the early approaches to model and control such systems are presented in \cite{c1,c2,c3}, and an optimal control approach in \cite{c4}. More recent approaches are formulated in a Model Predictive Control (MPC) framework, which allows to explicity incorporate system constraints in the optimization problem. Such techniques have been applied to perform trajectory tracking with multiple vehicles moving in a desired formation \cite{c5}. Motion planning for multiple vehicles moving in a formation is done within a receding horizon framework in \cite{c6}, utilizing a leader-follower strategy. Such a strategy is not robust against possible failure of the leader agent. This necessitates development of strategies in which each agent performs an equivalent task within the multi-agent system. This leads to the domain of Distributed Model Predictive Control (DMPC). Within the DMPC framework, the control problem is distributed over the agents. Since an optimization problem underlies the MPC framework, DMPC based techniques usually employ distributed optimization methods to distribute the optimization problem over the agents \cite{c7}. Motion planning algorithms are designed within this framework in \cite{c8} and \cite{c16} for formation control of multiple agents.
+\indent Transportation of objects with multiple vehicles is a standard problem in robotics and control. Some of the early approaches to model and control such systems are presented in \cite{c1,c2,c3}, and an optimal control approach in \cite{c4}. More recent approaches are formulated in a Model Predictive Control (MPC) framework, which allows to explicitly incorporate system constraints in the optimization problem. Such techniques have been applied to perform trajectory tracking with multiple vehicles moving in a desired formation \cite{c5}. Motion planning for multiple vehicles moving in a formation is done within a receding horizon framework in \cite{c6}, utilizing a leader-follower strategy. Such a strategy is not robust against possible failure of the leader agent. This necessitates development of strategies in which each agent performs an equivalent task within the multi-agent system. This leads to the domain of Distributed Model Predictive Control (DMPC). Within the DMPC framework, the control problem is distributed over the agents. Since an optimization problem underlies the MPC framework, DMPC based techniques usually employ distributed optimization methods to distribute the optimization problem over the agents \cite{c7}. Motion planning algorithms are designed within this framework in \cite{c8} and \cite{c16} for formation control of multiple agents.
 \\
 \indent
  A major difference between formation control problems and the payload transportation problem is that in the latter, the agents are dynamically coupled. This means that a change in state of one of the agents alters the state of the others. The coupled dynamics act as constraints shared by all the agents within the multi-agent system, and decomposing the centralized problem for DMPC purposes would require decomposing the coupling dynamics constraint. Decoupling of dynamics is done using primal decomposition
@@ -106,7 +106,7 @@ cooperative payload transportation problem, and Section III describes how
 this  problem is solved in an online distributed manner. Results from simulations based on the proposed approach are presented in Section IV, and the conclusions in Section V.
 \section{PROBLEM FORMULATION}
 \subsection{System model}
-The dynamic system under consideration here is shown in Figure \ref{2D_schematic}. It is modeled as multiple holonomic vehicles attached through 1D spring-damper elements to a common payload. The payload and the holonomic vehicles are abstracted as point masses, and are constrained to move in a 2D plane. Dynamic spring-mass-damper models are used to describe the system in the optimization problem. Coloumb friction is ignored in the model. The free length of the flexible elements is assumed to be $0$ m, resulting in the vehicles only applying a pulling force on the payload. In this paper, $N$=3 vehicles are considered.
+The dynamic system under consideration here is shown in Figure \ref{2D_schematic}. It is modeled as multiple holonomic vehicles attached through 1D spring-damper elements to a common payload. The payload and the holonomic vehicles are abstracted as point masses, and are constrained to move in a 2D plane. Dynamic spring-mass-damper models are used to describe the system in the optimization problem. Coulomb friction is ignored in the model. The free length of the flexible elements is assumed to be $0$ m, resulting in the vehicles only applying a pulling force on the payload. In this paper, $N$=3 vehicles are considered.
 
 \begin{figure}
   \centering
@@ -126,7 +126,7 @@ The payload trajectory is represented by the vector ${x_0:[0,T] \in \mathbb{R}^2
     & \qquad \subj
      \qquad \text{  } g(x_0(t),x_1(t),x_2(t),x_3(t)) = 0 \\
     &	\qquad  \qquad \qquad \quad \quad \quad h_{ij}(x_0(t),x_i(t),x_j(t)) \leq 0 \\
-    &	\qquad  \qquad \qquad \quad \quad \quad \ubar{l} \preceq f_i(x_0(t),x_i(t)) \preceq \bar{l}\\   
+    &	\qquad  \qquad \qquad \quad \quad \quad \ubar{l} \preceq f_i(x_0(t),x_i(t)) \preceq \bar{l}\\
     &	\qquad  \qquad \qquad \quad \quad \quad \ubar{d} \preceq d_i(x_i(t)) \preceq \bar{d} \\
     &	\qquad  \qquad \qquad \quad \quad \quad \{x_0^{(k)}(0), x_0^{(k)}(T)\}  = X^p \\
       &	\qquad  \qquad \qquad \quad \quad \quad \{x_i^{(k)}(0), x_i^{(k)}(T)\}  = X^i \\
@@ -134,7 +134,7 @@ The payload trajectory is represented by the vector ${x_0:[0,T] \in \mathbb{R}^2
     &	 \qquad \qquad \qquad \quad \quad \quad \forall t \in [0,T], \quad \forall i,j \in \{1,2,3\}, i \neq j
   \end{aligned}
 \end{equation}
-As mentioned earlier, the coupled payload dynamics of the multi-agent system are modeled as constraints in the optimization problem. It is expressed in \eqref{g}. The time dependence of the trajectories is dropped for ease of notation. The parameters $m_i$ and $m_0$ represent vehicle $i$'s and payload's mass respectively, and $c_i$ and $k_i$ represent damping and stiffness coefficients of flexible element $i$. 
+As mentioned earlier, the coupled payload dynamics of the multi-agent system are modeled as constraints in the optimization problem. It is expressed in \eqref{g}. The time dependence of the trajectories is dropped for ease of notation. The parameters $m_i$ and $m_0$ represent vehicle $i$'s and payload's mass respectively, and $c_i$ and $k_i$ represent damping and stiffness coefficients of flexible element $i$.
 \begin{equation}\label{g}
 \begin{aligned}
 g(x_0,x_1,x_2,x_3) &= m_0\ddot{x}_0 +  \mathlarger{\sum\limits_{i=1}^{3}}
@@ -148,7 +148,7 @@ Intra-vehicle collisions are avoided by the function $h_{ij}$, expressed in \eqr
 h_{ij}(x_0,x_i,x_j) &= \mathlarger{\langle} x_i - x_0,x_j - x_0 \mathlarger{\rangle}
 \end{aligned}
 \end{equation}
-The function $f_i$ consists of individual vehicle $i$'s dynamics, and flexible element $i$'s length. The lower and upper bounds on these quantities are captured in vectors $\ubar{l}$ and $\bar{l}$ respectively. This function is shown in \eqref{f}. 
+The function $f_i$ consists of individual vehicle $i$'s dynamics, and flexible element $i$'s length. The lower and upper bounds on these quantities are captured in vectors $\ubar{l}$ and $\bar{l}$ respectively. This function is shown in \eqref{f}.
  \begin{equation}\label{f}
  \begin{aligned}
  f_i(x_0,x_i) &=
@@ -176,8 +176,8 @@ Problem \eqref{label:central} represents an infinite dimensional problem, since 
 x_i(t) = \mathlarger{\sum\limits_{k=1}^{n}} \cx_{i,k}b_k(t) = \cx_i^Tb(t) \quad \forall i \in \{0,1,.,N\}
 \end{equation}
 
- The trajectories of each vehicle $i$ are consequently represented by the coefficient set $\cx_i$$=$ $\{\cx_{i,k}\}_{k=1}^{n}$ and those of the payload by $\cx_0$$=$$\{\cx_{0,k}\}_{k=1}^{n}$, for a chosen B-spline basis functions vector $b = [b_1,\ldots,b_n]^T$. Substituting these parameterizations in \eqref{label:central} results in an optimization problem with finite number of variables. A B-spline parameterization is chosen because of its convex hull property \cite{c15}, which dictates that the resultant spline function lies within the convex hull of the coefficients. Hence, the constraints on an infinite dimensional spline can be imposed on its coefficients, resulting in a finite number of constraints. Since the constraint functions $f_i$, $g$ and $h_{ij}$ are composed of polynomial combinations of the splines $x_i(t)$ and $x_0(t)$ and their derivatives, the resultant functions are splines in a B-spline polynomial basis as well. The coefficients of these splines are polynomial combinations of $\cx_0$ and $\cx_i$. Following the convex hull property, these constraints are transformed to $\cf_i$, $\cg$ and $\ch_{ij}$ respectively. The coefficients, and functions composed of those coefficients are indicated in a sans-serif font. 
-The resulting formulation is seen in \eqref{withparam}. 
+ The trajectories of each vehicle $i$ are consequently represented by the coefficient set $\cx_i$$=$ $\{\cx_{i,k}\}_{k=1}^{n}$ and those of the payload by $\cx_0$$=$$\{\cx_{0,k}\}_{k=1}^{n}$, for a chosen B-spline basis functions vector $b = [b_1,\ldots,b_n]^T$. Substituting these parameterizations in \eqref{label:central} results in an optimization problem with finite number of variables. A B-spline parameterization is chosen because of its convex hull property \cite{c15}, which dictates that the resultant spline function lies within the convex hull of the coefficients. Hence, the constraints on an infinite dimensional spline can be imposed on its coefficients, resulting in a finite number of constraints. Since the constraint functions $f_i$, $g$ and $h_{ij}$ are composed of polynomial combinations of the splines $x_i(t)$ and $x_0(t)$ and their derivatives, the resultant functions are splines in a B-spline polynomial basis as well. The coefficients of these splines are polynomial combinations of $\cx_0$ and $\cx_i$. Following the convex hull property, these constraints are transformed to $\cf_i$, $\cg$ and $\ch_{ij}$ respectively. The coefficients, and functions composed of those coefficients are indicated in a sans-serif font.
+The resulting formulation is seen in \eqref{withparam}.
 
  \begin{equation}
    \label{withparam}
@@ -257,7 +257,7 @@ The dual variables are found by maximizing the dual function $q$ with respect to
     \nabla_{\mu_{ij}} q &= \cx_{j}^{k+1} - \cz_{ij}^{k+1}
   \end{aligned}
 \end{equation}
- An optimal step of length $\rho$ in these directions is taken. The primal variables are updated in two steps in a Gauss-Siedel fashion, the first step updating the $\{\cx_{i},\cx_{i0},\cx_{ij}\}$ variables and the second updating the $\cz_{ij}$ variables.
+ An optimal step of length $\rho$ in these directions is taken. The primal variables are updated in two steps in a Gauss-Seidel fashion, the first step updating the $\{\cx_{i},\cx_{i0},\cx_{ij}\}$ variables and the second updating the $\cz_{ij}$ variables.
 \\
 \indent
 Solving the optimization problem \eqref{withparam} till convergence will require several ADMM iterations. These iterations will replace~(step 5) in Algorithm~\ref{alg:mpc}, and would be performed on individual vehicles in parallel. However, this would also result in a substantial computation and communication load for each MPC iteration. This is avoided by following the DMPC scheme proposed in \cite{c16}, which performs 1 ADMM iteration per MPC iteration. The resultant is Algorithm~\ref{alg:dmpc}, which includes the communication steps performed in one DMPC iteration.
@@ -328,20 +328,20 @@ From this least squares problem, it can be seen the consensus variables $\cz_{ij
 The DMPC strategy proposed in Algorithm~\ref{alg:dmpc} is numerically validated for the multi-agent system with parameters presented in Table \ref{table:params}:
  \begin{table}[h]
  	\centering
- 	\begin{tabular}{ | P{1cm} | P{1cm}| P{1cm}| P{1cm}| } 
+ 	\begin{tabular}{ | P{1cm} | P{1cm}| P{1cm}| P{1cm}| }
  				\hline
- 				 $m_0$ & $m_i$ & $c_i$ & $k_i$ \\ 
+ 				 $m_0$ & $m_i$ & $c_i$ & $k_i$ \\
  				 \hline
- 				 5Kg   & 2Kg   &  20Ns/m & 50N/m \\ 
+ 				 5Kg   & 2Kg   &  20Ns/m & 50N/m \\
  				 \hline
  	\end{tabular}
  \caption{Simulation parameters} \label{table:params}
  \end{table}
-The velocities and accelerations of the vehicles are enforced to start from 0$m/s$ and 0$m/s^2$ respectively. The initial positions have been chosen such that the payload starts from a balanced state. The vehicle and payload trajectories are parameterized as B-splines with cubic basis functions having 10 knot intervals. The time horizon is $T$ = 5s, and each DMPC update happens every $\Delta T$ = 0.1s. The ADMM penalty parameter is $\rho$ = 0.5. The optimization problem in step 7 of Algorithm~\ref{alg:dmpc} is solved using the interior point solver IPOPT \cite{c17}, for which the exact Jacobians and Hessians are provided by CasADi \cite{c18}. The initial conditions for each DMPC update in the simulations are obtained following the assumption of perfect tracking of trajectories calculated in the previous DMPC update by the vehicles. 
+The velocities and accelerations of the vehicles are enforced to start from 0$m/s$ and 0$m/s^2$ respectively. The initial positions have been chosen such that the payload starts from a balanced state. The vehicle and payload trajectories are parameterized as B-splines with cubic basis functions having 10 knot intervals. The time horizon is $T$ = 5s, and each DMPC update happens every $\Delta T$ = 0.1s. The ADMM penalty parameter is $\rho$ = 0.5. The optimization problem in step 7 of Algorithm~\ref{alg:dmpc} is solved using the interior point solver IPOPT \cite{c17}, for which the exact Jacobians and Hessians are provided by CasADi \cite{c18}. The initial conditions for each DMPC update in the simulations are obtained following the assumption of perfect tracking of trajectories calculated in the previous DMPC update by the vehicles.
 \\
 \indent
 \subsection{Payload transportation in an obstacle-free environment}
-The motion trajectories of the vehicles and payload upon implementation of Algorithm~\ref{alg:dmpc} to control the multi-agent system are shown in Figure \ref{trajectories}. The darker lines represent trajectories that have been traversed by the vehicles and payload, and the lighter lines represent future trajectories. The corresponding velocity trajectories tracked by the vehicles are shown in Figure \ref{velocities}. 
+The motion trajectories of the vehicles and payload upon implementation of Algorithm~\ref{alg:dmpc} to control the multi-agent system are shown in Figure \ref{trajectories}. The darker lines represent trajectories that have been traversed by the vehicles and payload, and the lighter lines represent future trajectories. The corresponding velocity trajectories tracked by the vehicles are shown in Figure \ref{velocities}.
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.40]{figures/velocities_gray.pdf}
@@ -381,7 +381,7 @@ Since all vehicles start with the same initial value of the payload position, th
  \indent
  \subsection{Payload transportation with obstacle avoidance}
 Static obstacle avoidance behavior is obtained by adding additional spline variables representing separating hyperplane coefficients, as discussed in \cite{c15}. Each vehicle $i$ is assigned a set of these variables $a_i(t)$ and $b_i(t)$, for which the separating hyperplane constraints are defined. These constraints make sure that the trajectories $x_i(t)$, $x_{i0}(t)$ and $x_{ij}(t)$ lie on one side of the separating hyperplane parameterized by $a_i(t)$ and $b_i(t)$, and the obstacle lies on the other side of the hyperplane. The trajectories generated with this behavior is shown in Figure \ref{obstacle}. Near the obstacle, there is a loss of consensus between $\cx_{ij}$ and $\cx_{j}$, which is regained over successive ADMM iterations. Like before, the rate at which the consensus is regained can be controlled by tuning the ADMM penalty parameter $\rho$.
- 
+
  \section{Conclusion and future work}
 This paper presents an algorithm to solve the multi-vehicle payload transportation problem in a Distributed Model Predictive Control (DMPC) framework. The optimization problem underlying the control problem is decoupled over the multiple vehicles based on the Alternating Direction Method of Multipliers (ADMM). A novel variable copying scheme is adopted, which results in a decentralized consensus formulation for a dynamically coupled system. Results based on numerical simulations are observed, and consensus on payload position is noted leading to the conclusion that the coupled dynamics are satisfied over successive iterations of the DMPC algorithm. Future work includes modifying the algorithm to include dynamics considering free length of the flexible elements, which makes practical validation with real-life holonomic vehicles feasible. Further modifications can be done to the algorithm to analyze the effects of additional constraints imposing consensus on local payload copies and separating hyperplane variables on dynamic behavior.
 
