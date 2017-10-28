@@ -311,8 +311,13 @@ The algorithm dictates that first a few ADMM iterations be performed to find the
 \begin{figure*}[t]
 	\centering
 	\setlength{\tabcolsep}{0.1em}
-	\begin{tabular}[t]{rrrrr}
-		\includegraphics[scale=0.245]{figures/no_obst.pdf}
+	\begin{tabular}[t]{|c|c|c|c|}
+		\hline
+			\includegraphics[scale=0.65]{figures/holonomic_0_tikz_gray.pdf} &
+			\includegraphics[scale=0.65]{figures/holonomic_1_tikz_gray.pdf} &
+			\includegraphics[scale=0.65]{figures/holonomic_2_tikz_gray.pdf} &
+			\includegraphics[scale=0.65]{figures/holonomic_3_tikz_gray.pdf} \\
+		\hline
 	\end{tabular}
 	\caption{Motion trajectories for the payload and holonomic vehicles within the multi-agent system. The dotted lines represent payload trajectory. The gray lines indicate the computed trajectories to follow. The black lines represent the covered paths.}
 	\label{trajectories}
@@ -339,7 +344,7 @@ The velocities and accelerations of the vehicles are enforced to start from 0$m/
 The motion trajectories of the vehicles and payload upon implementation of Algorithm~\ref{alg:dmpc} to control the multi-agent system are shown in Figure \ref{trajectories}. The darker lines represent trajectories that have been traversed by the vehicles and payload, and the lighter lines represent future trajectories. The corresponding velocity trajectories tracked by the vehicles are shown in Figure \ref{velocities}. 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.50]{figures/velocities.pdf}
+	\includegraphics[scale=0.40]{figures/velocities_gray.pdf}
 	\caption{Velocity trajectories of the vehicles. Dark line at 1 m/s indicates constraint.}
 	\label{velocities}
 \end{figure}
@@ -351,7 +356,7 @@ Since consensus constraints such as $\cx_{i0} = \cx_{j0}$ are not imposed, the p
 For the trajectories shown in Figure \ref{trajectories}, the corresponding $\epsilon_{0}$ is shown in Figure \ref{error}.
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.33]{figures/epsilon.pdf}
+	\includegraphics[scale=0.3]{figures/epsilons.pdf}
 	\caption{Error in system dynamics.}
 	\label{error}
 \end{figure}
@@ -359,9 +364,14 @@ For the trajectories shown in Figure \ref{trajectories}, the corresponding $\eps
 \begin{figure*}[t]
 	\centering
 	\setlength{\tabcolsep}{0.1em}
-	\begin{tabular}[t]{rrrrr}
-		\includegraphics[scale=0.80]{figures/obstacle.pdf}
-	\end{tabular}
+	\begin{tabular}[t]{|c|c|c|c|}
+			\hline
+				\includegraphics[scale=0.65]{figures/obstacle_0_tikz_gray.pdf} &
+				\includegraphics[scale=0.65]{figures/obstacle_1_tikz_gray.pdf} &
+				\includegraphics[scale=0.65]{figures/obstacle_2_tikz_gray.pdf} &
+				\includegraphics[scale=0.65]{figures/obstacle_3_tikz_gray.pdf} \\
+			\hline
+		\end{tabular}
 	\caption{Motion trajectories of the vehicles and payload in the presence of a stationary obstacle.}
 	\label{obstacle}
 \end{figure*}
